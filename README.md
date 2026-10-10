@@ -1,2 +1,0 @@
-# CD-Apogeu
-Reta Final
