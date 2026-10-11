@@ -1,0 +1,81 @@
+{
+  "name": "OPERAÇÃO DESTINAÇÃO FINAL | FILIPE OLIVEIRA SANTOS — CÂMARA DOS DEPUTADOS",
+  "short_name": "DESTINAÇÃO FINAL",
+  "description": "Sistema tático de alta performance e foco em execução bruta para o cargo de Analista Legislativo - Área: Arquivologia (Câmara dos Deputados / Cebraspe).",
+  "start_url": "./index.html",
+  "scope": "https://filipelipek-oss.github.io/Entalpia/",
+  "id": "https://filipelipek-oss.github.io/Entalpia/",
+  "display": "fullscreen",
+  "orientation": "natural",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "categories": [
+    "education",
+    "productivity"
+  ],
+  "shortcuts": [
+    {
+      "name": "Plano Tático Semanal",
+      "short_name": "Plano",
+      "description": "Acessar cronograma semanal datado e metas de ataque",
+      "url": "./index.html#plan",
+      "icons": [
+        {
+          "src": "assets/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Diretriz Destinação Final",
+      "short_name": "Missão",
+      "description": "Manifesto de resultado, foco e pontuação acumulada",
+      "url": "./index.html#mission",
+      "icons": [
+        {
+          "src": "assets/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "Discursivas P3 & Matriz GUT",
+      "short_name": "Estatísticas",
+      "description": "Acompanhar simulados da P3, curva de corte e priorização GUT",
+      "url": "./index.html#stats",
+      "icons": [
+        {
+          "src": "assets/icon-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
+}
