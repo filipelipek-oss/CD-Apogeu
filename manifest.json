@@ -1,0 +1,66 @@
+{
+  "name": "OPERAÇÃO DESTINAÇÃO FINAL | FILIPE OLIVEIRA SANTOS",
+  "short_name": "DESTINAÇÃO",
+  "description": "Sistema tático de alta performance e foco em execução para Analista Legislativo - Área: Arquivologia (Câmara dos Deputados).",
+  "lang": "pt-BR",
+  "dir": "ltr",
+  "start_url": "https://filipelipek-oss.github.io/Entalpia/index.html",
+  "scope": "https://filipelipek-oss.github.io/Entalpia/",
+  "id": "https://filipelipek-oss.github.io/Entalpia/index.html",
+  "display": "standalone",
+  "display_override": [
+    "fullscreen",
+    "standalone",
+    "window-controls-overlay"
+  ],
+  "orientation": "portrait-primary",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "prefer_related_applications": false,
+  "categories": [
+    "education",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/banner.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Painel Tático Reta Final - Desktop"
+    },
+    {
+      "src": "assets/watermark.jpg",
+      "sizes": "750x1334",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Cronograma e Execução Diária - Mobile"
+    }
+  ]
+}
