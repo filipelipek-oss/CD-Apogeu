@@ -1,0 +1,107 @@
+{
+  "name": "Entalpia",
+  "short_name": "Entalpia",
+  "description": "Sistema tático de alta performance e blindagem mental para Analista Legislativo - Área: Arquivologia (Câmara dos Deputados / Cebraspe).",
+  "lang": "pt-BR",
+  "dir": "auto",
+  "start_url": "https://filipelipek-oss.github.io/Entalpia/index.html",
+  "scope": "https://filipelipek-oss.github.io/Entalpia/",
+  "id": "https://filipelipek-oss.github.io/Entalpia/index.html",
+  "display": "fullscreen",
+  "display_override": [
+    "fullscreen",
+    "window-controls-overlay",
+    "standalone"
+  ],
+  "orientation": "portrait-primary",
+  "background_color": "#070709",
+  "theme_color": "#070709",
+  "prefer_related_applications": true,
+  "categories": [
+    "education",
+    "productivity"
+  ],
+  "icons": [
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "assets/banner.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Painel Tático Reta Final - Desktop"
+    },
+    {
+      "src": "assets/watermark.jpg",
+      "sizes": "750x1334",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Cronograma e Execução Diária - Mobile"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Plano Tático",
+      "short_name": "Plano",
+      "description": "Cronograma semanal datado e metas de ataque",
+      "url": "https://filipelipek-oss.github.io/Entalpia/index.html#plan",
+      "icons": [
+        {
+          "src": "assets/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Missão",
+      "short_name": "Missão",
+      "description": "Protocolo All In e doutrina de combate",
+      "url": "https://filipelipek-oss.github.io/Entalpia/index.html#mission",
+      "icons": [
+        {
+          "src": "assets/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Simulados Discursivos",
+      "short_name": "Discursivas",
+      "description": "Comparativo das 3 peças discursivas e Matriz GUT",
+      "url": "https://filipelipek-oss.github.io/Entalpia/index.html#stats",
+      "icons": [
+        {
+          "src": "assets/icon-192.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
+  ]
+}
