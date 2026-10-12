@@ -1,0 +1,1939 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>DESTINAÇÃO FINAL — FILIPE OLIVEIRA SANTOS</title>
+
+  <!-- PWA & Blindagem Nativa -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#070709">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Entalpia">
+  <meta name="format-detection" content="telephone=no">
+  <link rel="icon" type="image/png" href="assets/icon-512.png">
+  <link rel="apple-touch-icon" href="assets/icon-192.png">
+
+  <!-- Tipografias: Space Grotesk + Inter + JetBrains Mono + Cinzel -->
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700;800&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('./service-worker.js', { scope: './' })
+          .then(function(reg) { console.log('SW Operacional:', reg.scope); })
+          .catch(function(err) { console.error('Falha SW:', err); });
+      });
+    }
+
+    /* Fallback sequencial para o Logótipo */
+    var logoCandidates = [
+      'assets/logo-entalpia.png', 'asset/logo-entalpia.png', 'logo-entalpia.png',
+      'assets/icon-512.png', 'asset/icon-512.png', 'icon-512.png'
+    ];
+    var logoAttemptIdx = 0;
+    function cycleLogoFallback(img) {
+      logoAttemptIdx++;
+      if (logoAttemptIdx < logoCandidates.length) {
+        img.src = logoCandidates[logoAttemptIdx];
+      } else {
+        img.style.display = 'none';
+        var svg = document.getElementById('svg-logo');
+        if (svg) svg.style.display = 'block';
+      }
+    }
+
+    /* Fallback sequencial para a Marca d'água de Fundo */
+    var watermarkCandidates = [
+      'assets/watermark.jpg', 'asset/watermark.jpg', 'watermark.jpg',
+      './assets/watermark.jpg', './asset/watermark.jpg',
+      'assets/watermark.png', 'asset/watermark.png', 'watermark.png',
+      'assets/watermark.jpeg', 'asset/watermark.jpeg', 'watermark.jpeg'
+    ];
+    var watermarkAttemptIdx = 0;
+    function cycleWatermarkFallback(img) {
+      watermarkAttemptIdx++;
+      if (watermarkAttemptIdx < watermarkCandidates.length) {
+        img.src = watermarkCandidates[watermarkAttemptIdx];
+      } else {
+        img.style.display = 'none';
+      }
+    }
+
+    /* Fallback sequencial para o Banner do Cabeçalho */
+    var bannerCandidates = [
+      'assets/banner.jpg', 'asset/banner.jpg', 'banner.jpg',
+      './assets/banner.jpg', './asset/banner.jpg',
+      'assets/banner.png', 'asset/banner.png', 'banner.png',
+      'assets/banner.jpeg', 'asset/banner.jpeg', 'banner.jpeg'
+    ];
+    var bannerAttemptIdx = 0;
+    function cycleBannerFallback(img) {
+      bannerAttemptIdx++;
+      if (bannerAttemptIdx < bannerCandidates.length) {
+        img.src = bannerCandidates[bannerAttemptIdx];
+      } else {
+        img.style.display = 'none';
+      }
+    }
+  </script>
+
+  <style>
+    /* ==========================================================================
+       DESIGN SYSTEM: OLED TRANSLUCENT GLASSMORPHISM (MODO CAVERNA)
+       ========================================================================== */
+    *, *::before, *::after {
+      margin: 0; padding: 0; box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none; -webkit-user-select: none;
+    }
+    input, textarea, select { user-select: text; -webkit-user-select: text; }
+    html, body {
+      height: 100%; height: 100dvh; overflow: hidden;
+      background: #070709; overscroll-behavior: none; -webkit-overscroll-behavior: none;
+    }
+    :root {
+      --bg: #070709;
+      --surface: rgba(12, 12, 16, 0.72);
+      --card: rgba(16, 16, 22, 0.48);
+      --gold: #D4AF37;
+      --gold-light: #F3E5AB;
+      --gold-subtle: rgba(212, 175, 55, 0.14);
+      --crimson: #EF4444;
+      --crimson-subtle: rgba(239, 68, 68, 0.16);
+      --emerald: #10B981;
+      --blue: #3B82F6;
+      --teal: #14B8A6;
+      --purple: #8B5CF6;
+      --yellow: #EAB308;
+      --grena: #9F1239;
+      --gray-muted: #4B5563;
+      --text: #F3F4F6;
+      --text-muted: #9CA3AF;
+      --text-dim: #6B7280;
+      --border: rgba(255, 255, 255, 0.09);
+      --border-light: rgba(255, 255, 255, 0.18);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --safe-top: env(safe-area-inset-top, 0px);
+      --safe-bottom: env(safe-area-inset-bottom, 0px);
+      --safe-left: env(safe-area-inset-left, 0px);
+      --safe-right: env(safe-area-inset-right, 0px);
+    }
+    body {
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      display: flex; flex-direction: column;
+      position: relative; isolation: isolate;
+      padding-top: var(--safe-top);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* CAMADA REAL DE PLANO DE FUNDO TRANSLÚCIDO VISÍVEL */
+    #bg-watermark-layer {
+      position: fixed; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none; z-index: 0; overflow: hidden;
+    }
+    #img-watermark {
+      width: min(850px, 92vw); max-height: 85vh;
+      object-fit: contain; opacity: 0.50;
+      filter: contrast(1.25) brightness(1.15);
+    }
+
+    .glass { backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+
+    /* HEADER */
+    .header {
+      height: 78px; background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 max(16px, var(--safe-left));
+      padding-right: max(16px, var(--safe-right));
+      flex-shrink: 0; z-index: 20; position: relative;
+    }
+    #header-banner-bg {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: flex-end;
+      pointer-events: none; overflow: hidden; z-index: -1;
+    }
+    #img-banner {
+      width: 480px; height: 100%; object-fit: cover;
+      object-position: center right; opacity: 0.55;
+    }
+
+    .header-left { display: flex; align-items: center; gap: 12px; flex-shrink: 0; min-width: 0; }
+    .logo-box { width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .logo-img { width: 100%; height: 100%; object-fit: contain; filter: drop-shadow(0 2px 8px rgba(212, 175, 55, 0.35)); }
+    .logo-fallback { width: 38px; height: 38px; display: none; }
+    .header-left-meta { display: flex; flex-direction: column; min-width: 0; }
+    .header-user-name {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 0.88rem; font-weight: 800; letter-spacing: 0.04em;
+      color: var(--gold-light); text-transform: uppercase;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .header-sub-target {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.62rem;
+      color: var(--text-muted); font-weight: 700; letter-spacing: 0.03em;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      margin-top: 1px; display: flex; align-items: center; gap: 5px;
+    }
+    .header-sub-target span.tag {
+      font-size: 0.56rem; padding: 1px 5px;
+      background: rgba(255, 255, 255, 0.06); border: 1px solid var(--border);
+      color: var(--gold); border-radius: 3px;
+    }
+
+    /* CENTRO DO CABEÇALHO: ALERTA MÁXIMO EM BRANCO PURO COM BRILHO */
+    .header-center { flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; padding: 0 10px; }
+    .header-brand-alerta {
+      font-family: 'Space Grotesk', sans-serif; font-size: 1.05rem; font-weight: 900;
+      letter-spacing: 0.12em; color: #FFFFFF; text-transform: uppercase;
+      text-shadow: 0 0 10px #FFFFFF, 0 0 20px rgba(255, 255, 255, 0.9), 0 0 35px rgba(255, 255, 255, 0.6);
+      line-height: 1.1;
+    }
+
+    .header-right { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+    .btn-banca {
+      height: 34px; padding: 0 10px; border-radius: var(--radius-sm);
+      border: 1px solid rgba(59, 130, 246, 0.45); background: rgba(59, 130, 246, 0.16);
+      color: #93C5FD; font-size: 0.68rem; font-weight: 800;
+      display: inline-flex; align-items: center; gap: 5px; cursor: pointer; text-decoration: none;
+    }
+    .countdown-pill {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.70rem; font-weight: 800;
+      color: var(--crimson); background: rgba(255, 255, 255, 0.05); border: none;
+      padding: 6px 10px; border-radius: var(--radius-sm); white-space: nowrap;
+    }
+    .btn-fs {
+      width: 36px; height: 36px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border); background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center;
+    }
+
+    /* BARRA DE COMBATE */
+    .combat-bar {
+      background: rgba(10, 10, 14, 0.88); border-bottom: 1px solid var(--border);
+      padding: 8px max(16px, var(--safe-left)); padding-right: max(16px, var(--safe-right));
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; flex-shrink: 0; flex-wrap: wrap; position: relative; z-index: 2;
+    }
+    .timer-group { display: flex; align-items: center; gap: 10px; }
+    .timer-beacon { width: 8px; height: 8px; border-radius: 50%; background: var(--text-dim); transition: all 0.2s; }
+    .timer-beacon.active {
+      background: var(--emerald); box-shadow: 0 0 10px var(--emerald);
+      animation: beaconPulse 1.4s infinite ease-in-out;
+    }
+    @keyframes beaconPulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.75); }
+    }
+    .timer-readout {
+      font-family: 'JetBrains Mono', monospace; font-size: 1.55rem; font-weight: 800;
+      color: var(--gold-light); letter-spacing: -0.02em;
+    }
+    .timer-actions { display: flex; gap: 8px; align-items: center; }
+    .btn-timer {
+      width: 40px; height: 40px; border-radius: 10px; border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.04); color: var(--text-muted); cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .btn-timer svg { width: 18px; height: 18px; }
+    .btn-timer.play { background: rgba(16, 185, 129, 0.16); border-color: rgba(16, 185, 129, 0.45); color: #34D399; }
+    .btn-timer.pause { background: rgba(59, 130, 246, 0.16); border-color: rgba(59, 130, 246, 0.45); color: #60A5FA; }
+    .btn-timer.stop { background: rgba(239, 68, 68, 0.16); border-color: rgba(239, 68, 68, 0.45); color: #F87171; }
+    .btn-timer.reset { color: var(--text-dim); }
+    .btn-timer.log { background: rgba(212, 175, 55, 0.16); border-color: rgba(212, 175, 55, 0.45); color: var(--gold-light); }
+
+    /* VIEWPORT */
+    .viewport {
+      flex: 1; overflow-y: auto; overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
+      padding: 16px max(16px, var(--safe-left));
+      padding-right: max(16px, var(--safe-right));
+      padding-bottom: calc(84px + var(--safe-bottom));
+      position: relative; z-index: 2;
+    }
+    .tab-content { display: none; }
+    .tab-content.active { display: block; animation: fadeIn 0.16s ease; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
+
+    .section-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; }
+    .section-title { font-size: 0.90rem; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .badge-neon {
+      color: var(--crimson); font-size: 0.68rem; padding: 2px 6px;
+      background: var(--crimson-subtle); border-radius: 4px; border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 14px; margin-bottom: 14px; }
+
+    /* ESTANDARTE MODO CAVERNA */
+    .caverna-banner-container {
+      text-align: center; margin-bottom: 16px; padding: 16px 14px;
+      background: linear-gradient(135deg, rgba(239, 68, 68, 0.18), rgba(12, 12, 18, 0.75));
+      border: 1.5px solid rgba(239, 68, 68, 0.45); border-radius: var(--radius-md);
+      box-shadow: 0 4px 24px rgba(239, 68, 68, 0.22);
+    }
+    .caverna-title-bold {
+      font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; font-weight: 900;
+      letter-spacing: 0.06em; color: #EF4444; text-transform: uppercase;
+      text-shadow: 0 0 16px rgba(239, 68, 68, 0.65), 0 2px 4px rgba(0,0,0,0.8);
+      line-height: 1.2;
+    }
+    .caverna-sub-desc {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.68rem; font-weight: 800;
+      color: var(--gold-light); letter-spacing: 0.10em; text-transform: uppercase; margin-top: 5px;
+    }
+
+    /* TABELA TÁTICA */
+    .table-container {
+      overflow-x: auto; background: rgba(10, 10, 14, 0.28);
+      border: 1px solid var(--border); border-radius: var(--radius-md); margin-bottom: 12px;
+    }
+    .tactical-table { width: 100%; border-collapse: collapse; min-width: 900px; table-layout: fixed; }
+    .tactical-table th {
+      background: rgba(16, 16, 22, 0.48); padding: 8px; border-bottom: 1px solid var(--border);
+      font-size: 0.68rem; font-weight: 800; letter-spacing: 0.06em; color: var(--text-muted);
+      text-transform: uppercase; text-align: center;
+    }
+    .tactical-table th.weekend-col { color: #FF5E7E; }
+    .tactical-table td { border: 1px solid rgba(255, 255, 255, 0.04); height: 64px; padding: 0; }
+    .week-header-cell {
+      background: rgba(16, 16, 22, 0.48); padding: 6px; font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem; font-weight: 800; color: var(--gold); text-align: center;
+      border-right: 1px solid var(--border); width: 100px;
+    }
+    .week-date-span { font-size: 0.58rem; color: var(--text-dim); display: block; margin-top: 1px; }
+
+    .cell-button {
+      width: 100%; height: 64px; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; padding: 2px 4px;
+      cursor: pointer; font-size: 0.70rem; font-weight: 800; text-transform: uppercase;
+      overflow: hidden; text-align: center; line-height: 1.25;
+      background: rgba(255, 255, 255, 0.015); transition: background 0.12s ease; gap: 1px;
+    }
+    .cell-button:hover { background: rgba(255, 255, 255, 0.06); }
+    .cell-button.empty { color: var(--text-dim); }
+
+    .cell-part-badge-white {
+      width: 100%; font-size: 0.56rem; line-height: 1.15; padding: 1px 4px;
+      border-radius: 3px; font-weight: 800; white-space: nowrap;
+      overflow: hidden; text-overflow: ellipsis; text-align: center; display: block;
+      background: rgba(255, 255, 255, 0.08) !important;
+      border: 1px solid rgba(255, 255, 255, 0.15) !important;
+      color: #F8FAFC !important; text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+    }
+
+    /* PALETA CROMÁTICA */
+    .alpha   { border-left: 3px solid #EF4444; background: rgba(239, 68, 68, 0.18); color: #FCA5A5; }
+    .bravo   { border-left: 3px solid #3B82F6; background: rgba(59, 130, 246, 0.18); color: #93C5FD; }
+    .charlie { border-left: 3px solid #10B981; background: rgba(16, 185, 129, 0.16); color: #6EE7B7; }
+    .delta   { border-left: 3px solid #EAB308; background: rgba(234, 179, 8, 0.18); color: #FEF08A; }
+    .echo    { border-left: 3px solid #8B5CF6; background: rgba(139, 92, 246, 0.16); color: #C4B5FD; }
+
+    /* REVISÃO FINAL (26/12 a 14/01): FUNDO VINHO / GRENÁ NOBRE COM TEXTO BRILHANTE */
+    .special-rev-final {
+      border: 1.5px solid #9F1239 !important;
+      background: rgba(136, 19, 55, 0.38) !important;
+      color: #FFE4E6 !important;
+      font-weight: 900 !important;
+      letter-spacing: 0.04em !important;
+      text-shadow: 0 0 10px rgba(244, 63, 94, 0.8), 0 0 20px rgba(159, 18, 57, 0.6) !important;
+      box-shadow: 0 0 14px rgba(136, 19, 55, 0.45), inset 0 0 6px rgba(159, 18, 57, 0.25) !important;
+      animation: grenaPulse 2.5s infinite ease-in-out;
+    }
+    @keyframes grenaPulse {
+      0%, 100% { box-shadow: 0 0 10px rgba(136, 19, 55, 0.35); }
+      50% { box-shadow: 0 0 22px rgba(190, 18, 60, 0.70); }
+    }
+
+    /* REVISÃO AVULSA: AZUL-ESVERDEADO (TEAL) */
+    .special-rev { border-left: 3px solid #14B8A6; background: rgba(20, 184, 166, 0.18); color: #5EEAD4; }
+
+    /* BLINDAGEM MENTAL (15 E 16/01): PRATA TRANSPARENTE COM TEXTO EM AZUL ELÉTRICO */
+    .special-blindagem {
+      background: rgba(203, 213, 225, 0.14) !important;
+      border: 1.5px solid rgba(203, 213, 225, 0.50) !important;
+      color: #00F0FF !important;
+      font-weight: 900 !important;
+      letter-spacing: 0.04em !important;
+      text-shadow: 0 0 10px rgba(0, 240, 255, 0.8) !important;
+    }
+
+    /* BLOQUEADO: CINZA-CHUMBO */
+    .locked-cell { border-left: 3px solid #4B5563; background: rgba(55, 65, 81, 0.32); color: #9CA3AF; }
+
+    /* PROVA (17/01): FUNDO ESCURO PRO PRETO COM CONTORNO E PALAVRA EM BRANCO BRILHANTE */
+    .special-exam {
+      background: #07070B !important;
+      border: 1.5px solid rgba(255, 255, 255, 0.85) !important;
+      color: #FFFFFF !important;
+      font-size: 0.84rem !important;
+      font-weight: 900 !important;
+      letter-spacing: 0.08em !important;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.45), inset 0 0 10px rgba(255, 255, 255, 0.2) !important;
+      text-shadow: 0 0 12px #FFFFFF, 0 0 24px rgba(255, 255, 255, 0.95) !important;
+      animation: examPureGlow 2.5s infinite ease-in-out;
+    }
+    @keyframes examPureGlow {
+      0%, 100% { box-shadow: 0 0 14px rgba(255, 255, 255, 0.35); }
+      50% { box-shadow: 0 0 28px rgba(255, 255, 255, 0.75), inset 0 0 12px rgba(255, 255, 255, 0.4); }
+    }
+
+    .special-rest { background: rgba(255, 255, 255, 0.05); border-left: 3px solid #9CA3AF; color: #E5E7EB; }
+    .tactical-sim { border-left: 3px solid var(--gold); background: var(--gold-subtle); color: var(--gold-light); }
+
+    /* CONTEÚDO PROGRAMÁTICO */
+    .subject-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); margin-bottom: 8px; overflow: hidden; }
+    .subject-header {
+      padding: 10px 14px; cursor: pointer; display: flex;
+      justify-content: space-between; align-items: center; background: rgba(255, 255, 255, 0.02);
+    }
+    .subject-body { display: none; border-top: 1px solid var(--border); }
+    .subject-body.open { display: block; }
+    .topic-interactive-row {
+      padding: 12px 14px; border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      cursor: pointer; display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    }
+    .topic-interactive-row:hover { background: rgba(255, 255, 255, 0.03); }
+    .topic-interactive-row:last-child { border: none; }
+    .topic-main-text { font-size: 0.78rem; line-height: 1.45; color: #E5E7EB; flex: 1; }
+    .topic-interactive-row.status-done .topic-main-text { color: #86EFAC !important; text-decoration: line-through !important; opacity: 0.88; }
+    .topic-interactive-row.status-disabled .topic-main-text { color: var(--text-dim) !important; text-decoration: line-through !important; opacity: 0.35 !important; }
+    .topic-status-pill {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.60rem; font-weight: 800;
+      padding: 3px 8px; border-radius: 4px; letter-spacing: 0.04em; text-transform: uppercase; flex-shrink: 0;
+    }
+    .pill-pending { background: rgba(255, 255, 255, 0.05); color: var(--text-muted); border: 1px solid var(--border); }
+    .pill-done { background: var(--emerald); color: #000; font-weight: 900; }
+    .pill-disabled { background: rgba(100, 100, 110, 0.15); color: var(--text-dim); border: 1px solid rgba(255, 255, 255, 0.08); }
+
+    /* CARD DE MISSÃO */
+    .mission-epic-card {
+      background: linear-gradient(145deg, rgba(22, 16, 20, 0.88), rgba(9, 9, 13, 0.94));
+      border: 1px solid rgba(212, 175, 55, 0.35); border-top: 4px solid var(--gold);
+      border-radius: var(--radius-lg); padding: 24px 20px; margin-bottom: 16px;
+    }
+    .mission-header-centered { text-align: center; margin-bottom: 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.09); padding-bottom: 16px; }
+    .mission-main-title {
+      font-family: 'Cinzel', serif; font-size: 1.25rem; font-weight: 900;
+      color: var(--gold-light); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 4px;
+    }
+    .mission-sub-badge {
+      font-family: 'JetBrains Mono', monospace; font-size: 0.70rem; font-weight: 800;
+      color: var(--crimson); letter-spacing: 0.06em; text-transform: uppercase;
+    }
+    .mission-body-prose { font-size: 0.84rem; color: #E5E7EB; line-height: 1.74; }
+    .mission-body-prose p { margin-bottom: 14px; text-align: justify; }
+    .mission-highlight-box {
+      background: rgba(0, 0, 0, 0.65); border-left: 3px solid var(--gold);
+      padding: 12px 14px; border-radius: 4px; margin: 14px 0; font-size: 0.82rem; font-weight: 600; color: var(--gold-light);
+    }
+    .mission-scripture-box {
+      background: rgba(16, 185, 129, 0.06); border-left: 3px solid var(--emerald);
+      border-radius: 4px; padding: 12px 14px; margin: 14px 0; font-size: 0.80rem; color: #D1FAE5;
+    }
+
+    /* DISCURSIVAS P3 */
+    .p3-inputs-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 8px; }
+    .p3-field-label { font-size: 0.68rem; font-weight: 700; color: var(--text-muted); margin-bottom: 3px; display: block; }
+    .p3-stats-banner { display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px; margin: 10px 0; }
+    .p3-stat-item { background: rgba(0, 0, 0, 0.35); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 6px; text-align: center; }
+    .p3-stat-val { font-family: 'JetBrains Mono', monospace; font-size: 1rem; font-weight: 800; color: var(--gold-light); }
+    .p3-stat-lbl { font-size: 0.58rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; }
+
+    /* MATRIZ GUT */
+    .gut-inputs { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 6px; margin-bottom: 10px; }
+    .dark-input, .dark-select {
+      height: 38px; background: #14141C !important; color: #F3F4F6 !important;
+      border: 1px solid var(--border-light) !important; border-radius: var(--radius-sm);
+      padding: 0 10px; font-size: 0.78rem; outline: none;
+    }
+    .admin-tool-box {
+      background: rgba(16, 16, 24, 0.65); border-left: 3px solid var(--gold);
+      border-radius: 4px; padding: 10px 12px; margin-top: 10px; font-size: 0.74rem; color: var(--text-muted); line-height: 1.5;
+    }
+
+    /* CHECKLIST */
+    .check-item {
+      display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px;
+      background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); cursor: pointer; margin-bottom: 6px;
+    }
+    .check-item.done { border-color: rgba(16, 185, 129, 0.35); background: rgba(16, 185, 129, 0.05); }
+    .check-box {
+      width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid var(--text-dim);
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;
+    }
+    .check-item.done .check-box { border-color: var(--emerald); background: var(--emerald); color: #000; font-weight: 900; }
+    .check-date { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; font-weight: 800; color: var(--gold-light); min-width: 105px; flex-shrink: 0; }
+    .check-desc { font-size: 0.76rem; color: var(--text); line-height: 1.35; flex: 1; }
+    .check-item.done .check-desc { text-decoration: line-through; color: var(--text-muted); }
+
+    /* HUD */
+    .hud-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+    .hud-box { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; text-align: center; }
+    .hud-val { font-family: 'JetBrains Mono', monospace; font-size: 1.3rem; font-weight: 800; color: var(--gold-light); }
+    .hud-label { font-size: 0.62rem; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-top: 2px; }
+
+    .data-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    .data-table th, .data-table td { padding: 8px 10px; border-bottom: 1px solid var(--border); font-size: 0.74rem; text-align: left; }
+    .data-table th { color: var(--text-muted); font-size: 0.65rem; text-transform: uppercase; }
+
+    /* BOTTOM NAV */
+    .bottom-nav {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      height: calc(58px + var(--safe-bottom)); padding-bottom: var(--safe-bottom);
+      background: var(--surface); border-top: 1px solid var(--border);
+      display: flex; z-index: 50;
+    }
+    .nav-item {
+      flex: 1; background: none; border: none; color: var(--text-dim);
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 3px; cursor: pointer; font-size: 0.62rem; font-weight: 700; text-transform: uppercase;
+    }
+    .nav-item.active { color: var(--gold); }
+    .nav-item svg { width: 18px; height: 18px; stroke-width: 2.2; }
+
+    /* MODAL */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.88);
+      z-index: 100; display: none; align-items: flex-end; justify-content: center;
+      backdrop-filter: blur(8px);
+    }
+    .modal-overlay.open { display: flex; animation: fadeIn 0.16s ease; }
+    .modal-panel {
+      width: 100%; max-width: 600px; max-height: 85vh; background: #0E0E14;
+      border: 1px solid var(--border-light); border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+      display: flex; flex-direction: column;
+    }
+    .modal-top { padding: 14px 18px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+    .modal-top h3 { font-size: 0.90rem; font-weight: 800; color: var(--text); }
+    .modal-body { padding: 16px 18px; overflow-y: auto; }
+    .option-select-card {
+      background: rgba(255, 255, 255, 0.02); border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 10px; margin-bottom: 6px; cursor: pointer;
+    }
+    .option-select-card.selected { border-color: var(--gold); background: var(--gold-subtle); }
+    .slot-part-card { background: rgba(0, 0, 0, 0.4); border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px 10px; margin-bottom: 8px; }
+    .slot-part-header { font-size: 0.68rem; font-weight: 800; color: var(--gold-light); margin-bottom: 4px; text-transform: uppercase; display: flex; justify-content: space-between; }
+
+    .btn-action {
+      height: 36px; padding: 0 12px; border-radius: var(--radius-sm);
+      border: 1px solid var(--border); background: rgba(255, 255, 255, 0.04);
+      color: var(--text); cursor: pointer; display: inline-flex; align-items: center;
+      justify-content: center; gap: 6px; font-size: 0.72rem; font-weight: 700;
+    }
+    .btn-action.success { background: rgba(16, 185, 129, 0.16); border-color: rgba(16, 185, 129, 0.4); color: var(--emerald); }
+    .btn-action.danger { background: var(--crimson-subtle); border-color: rgba(239, 68, 68, 0.4); color: #FCA5A5; }
+    .btn-action.primary { background: var(--gold-subtle); border-color: rgba(212, 175, 55, 0.4); color: var(--gold); }
+
+    @media(max-width: 768px) {
+      .header-brand-alerta { font-size: 0.88rem; }
+      .header-user-name { font-size: 0.76rem; }
+      .header-sub-target { font-size: 0.54rem; }
+      .gut-inputs, .p3-inputs-grid { grid-template-columns: 1fr; }
+      .p3-stats-banner, .hud-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ELEMENTO DINÂMICO DA MARCA D'ÁGUA COM FALLBACK SEQUENCIAL -->
+  <div id="bg-watermark-layer">
+    <img id="img-watermark" src="assets/watermark.jpg" onerror="cycleWatermarkFallback(this)" alt="" />
+  </div>
+
+  <!-- HEADER -->
+  <header class="header glass">
+    <div id="header-banner-bg">
+      <img id="img-banner" src="assets/banner.jpg" onerror="cycleBannerFallback(this)" alt="" />
+    </div>
+
+    <div class="header-left">
+      <div class="logo-box" title="Logotipo Entalpia">
+        <img class="logo-img" id="img-logo" src="assets/logo-entalpia.png" onerror="cycleLogoFallback(this)" alt="Logo">
+        <svg class="logo-fallback" id="svg-logo" viewBox="0 0 100 100" fill="none">
+          <circle cx="50" cy="50" r="46" stroke="#D4AF37" stroke-width="2.5"/>
+          <path d="M35 24H65V35H47V45H62V55H47V65H65V76H35V24Z" fill="#D4AF37"/>
+        </svg>
+      </div>
+      <div class="header-left-meta">
+        <div class="header-user-name">FILIPE OLIVEIRA SANTOS</div>
+        <div class="header-sub-target">CÂMARA DOS DEPUTADOS • ARQUIVOLOGIA <span class="tag">CARGO 4</span></div>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <div class="header-brand-alerta">ALERTA MÁXIMO: ÚLTIMO DISPARO</div>
+    </div>
+
+    <div class="header-right">
+      <a href="https://www.cebraspe.org.br/concursos/cd_26_analista" target="_blank" rel="noopener noreferrer" class="btn-banca">BANCA ↗</a>
+      <div class="countdown-pill" id="cd-display">PROVA: --d</div>
+      <button class="btn-fs" id="btn-fullscreen" onclick="toggleAppFullscreen()" title="Alternar Tela Cheia">
+        <svg id="fs-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- BARRA DE COMBATE -->
+  <section class="combat-bar glass">
+    <div class="timer-group">
+      <div class="timer-beacon" id="timer-beacon"></div>
+      <div class="timer-readout" id="timer-display">00:00:00</div>
+    </div>
+    <div class="timer-actions">
+      <button class="btn-timer play" onclick="timerStart()" title="Iniciar Ataque / Foco">
+        <svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+      </button>
+      <button class="btn-timer pause" onclick="timerPause()" title="Pausar">
+        <svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1.5"/><rect x="14" y="4" width="4" height="16" rx="1.5"/></svg>
+      </button>
+      <button class="btn-timer stop" onclick="timerStop(true)" title="Parar e Gravar Estudo">
+        <svg viewBox="0 0 24 24" fill="currentColor"><rect x="5" y="5" width="14" height="14" rx="2.5"/></svg>
+      </button>
+      <button class="btn-timer reset" onclick="timerReset()" title="Zerar Cronômetro">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+        </svg>
+      </button>
+      <button class="btn-timer log" onclick="openLogModal()" title="Lançar Estudo Manualmente">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+        </svg>
+      </button>
+    </div>
+  </section>
+
+  <!-- VIEWPORT -->
+  <main class="viewport">
+    
+    <!-- ABA 1: RETA FINAL CÂMARA DOS DEPUTADOS -->
+    <div id="tab-plan" class="tab-content active">
+      <div class="caverna-banner-container glass">
+        <div class="caverna-title-bold">RETA FINAL CÂMARA DOS DEPUTADOS</div>
+        <div class="caverna-sub-desc">MODO CAVERNA ATIVADO • EXECUÇÃO BRUTA ATÉ 17/01/2027</div>
+      </div>
+
+      <div class="table-container glass">
+        <table class="tactical-table">
+          <thead>
+            <tr>
+              <th style="width:100px">SEMANA</th>
+              <th>SEG</th><th>TER</th><th>QUA</th><th>QUI</th><th>SEX</th>
+              <th class="weekend-col">SÁB</th><th class="weekend-col">DOM</th>
+            </tr>
+          </thead>
+          <tbody id="table-schedule-body"></tbody>
+        </table>
+      </div>
+
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <button class="btn-action" onclick="addWeek()">+ Semana</button>
+        <button class="btn-action danger" onclick="removeWeek()">− Semana</button>
+        <button class="btn-action" onclick="exportDataBackup()">Backup</button>
+        <button class="btn-action" onclick="document.getElementById('file-backup').click()">Importar</button>
+        <input type="file" id="file-backup" hidden onchange="importDataBackup(this)">
+      </div>
+    </div>
+
+    <!-- ABA 2: MISSÃO -->
+    <div id="tab-mission" class="tab-content">
+      <div class="mission-epic-card glass">
+        <div class="mission-header-centered">
+          <div class="mission-main-title">PROTOCOLO ALL IN: A BATALHA DECISIVA</div>
+          <div class="mission-sub-badge">ENCERRAMENTO DO DESERTO • TERRENO DA MORTE</div>
+        </div>
+        
+        <div class="mission-body-prose">
+          <p>Acabou o tempo de conter os golpes. Por anos, você andou pelo mundo pisando macio, amortecendo o próprio impacto, engolindo desaforos e sendo o cara compreensivo demais — o bonzinho que sempre cedeu, que colecionou cicatrizes em silêncio e viu a conta da ingenuidade chegar cara. A crise bateu no peito, cobrou o preço e cobriu tudo de cinzas. Mas a crise acabou. O fogo queimou a fraqueza e a cicatriz virou couraça de guerra. Agora não existe plano de recuo, não existe meia medida e não existe espaço para dúvida. É o seu All In. É a maior chance da sua existência, e você vai colocar todas as fichas na mesa.</p>
+          <p>Durante o dia, diante das pessoas e na rotina do trabalho, vista a pele civil se for preciso. Seja polido, cumpra o dever, navegue pelas formalidades com frieza tática. Mas assim que a porta se fecha e a mesa de estudo se acende, esse personagem morre. Entra em cena o seu verdadeiro alter ego. Aquele velho Filipe que os tímidos chamariam de irresponsável — não por falta de juízo, mas porque ele não aceita limites impostos pelo medo, não calcula o cansaço e não tem receio de queimar até a última gota de energia para arrancar a vitória.</p>
+          <p>A força definitiva opera nas sombras e trabalha absolutamente sozinha. Na caverna, não existe torcida, não existe tapinha nas costas, não existe plateia aplaudindo o esforço diário. É você, a solitude cortante da madrugada e a lâmina afiada da sua mente. Quem depende de aplauso desmorona no silêncio; quem encontra o espírito de luta na própria solidão se torna imparável. Você não precisa de ninguém validando o seu valor, porque a sua guerra é interna e o seu foco é cirúrgico.</p>
+          <div class="mission-scripture-box">
+            <b>Jeremias 17:5-8:</b> “Assim diz o Senhor: Maldito o homem que confia no homem, e faz da carne o seu braço, e aparta o seu coração do Senhor! (...) Bendito o homem que confia no Senhor, e cuja esperança é o Senhor. Porque ele é como a árvore plantada junto às águas, que estende as suas raízes para o ribeiro e não receia quando vem o calor, mas a sua folha fica verde; e no ano de sequidão não se afadiga, nem deixa de dar fruto.”
+          </div>
+          <p>O ambiente ao seu redor pode secar, as cobranças podem ferver e a ingratidão dos homens pode se manifestar, mas você não é capim seco que tomba com a ventania da opinião alheia. Suas raízes descem direto na rocha. E é por não apoiar a sua esperança no braço frágil dos homens que você ancora tudo na promessa soberana:</p>
+          <div class="mission-scripture-box">
+            <b>Provérbios 3:5-6:</b> “Confia no Senhor de todo o teu coração e não te estribes no teu próprio entendimento. Reconhece-o em todos os teus caminhos, e Ele endireitará as tuas veredas.”
+          </div>
+          <div class="mission-highlight-box">
+            <b>QUEBRE O RITMO HIPNÓTICO ANTES QUE ELE QUEBRE VOCÊ:</b><br>
+            Em <i>Mais Esperto que o Diabo</i>, a maior arma contra o homem é exatamente essa: a alienação silenciosa, a inércia disfarçada de rotina, a mente arrastada pelo fluxo da manada. Cada minuto entregue ao rolamento automático de feed é um pedaço da sua vitória sendo entregue de bandeja para a derrota. Desperte do transe. Assuma o controle absoluto do seu pensamento.
+          </div>
+          <p>Sun Tzu ensinou que, no terreno da morte, os guerreiros lutam com uma ferocidade implacável porque sabem que recuar significa o fim. As pontes atrás de você ruíram. A vida antiga não serve mais.</p>
+          <p style="font-weight:700;color:var(--gold-light)">Não se distraia, guerreiro.</p>
+          <p>Seja aquele maluco contra quem ninguém tem coragem de apostar contra. Aquele cara imprevisível e perigoso para a concorrência que não vai perder tempo, não vai negociar com o sono, vai manobrar as horas, vai dar cambalhota, vai trabalhar e estudar o triplo até esgotar o edital.</p>
+          <p>Nos próximos três meses, coloque tudo na mesa. Entregue cada resquício de fôlego, porque você não está estudando apenas para passar em uma prova da Câmara dos Deputados: você está lutando a batalha final para nunca mais ter que lutar por sobrevivência. Você sangra agora por noventa dias para comprar a sua paz pelo resto da vida.</p>
+          <p style="font-family:'Cinzel',serif;font-size:0.90rem;font-weight:900;color:var(--gold-light);text-align:center;margin-top:18px">
+            ASSUMA O SEU MANTO, ENCARE O TERRENO DA MORTE E TOME POSSE DAQUILO QUE FOI FORJADO PARA SER SEU.
+          </p>
+        </div>
+      </div>
+
+      <div class="card glass">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div style="font-size:0.84rem;font-weight:700">Pontuação de Guerra Acumulada</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:1.15rem;font-weight:800;color:var(--gold)"><span id="points-counter">0</span> pts</div>
+        </div>
+        <div style="height:6px;background:rgba(255,255,255,0.06);border-radius:99px;overflow:hidden">
+          <div id="points-progress-bar" style="width:0%;height:100%;background:linear-gradient(90deg,var(--gold),var(--crimson));transition:width 0.3s"></div>
+        </div>
+      </div>
+
+      <div class="section-title" style="margin-bottom:8px">Missões Táticas (Clique para Pontuar)</div>
+      <div id="missions-list" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:6px"></div>
+    </div>
+
+    <!-- ABA 3: CONTEÚDO PROGRAMÁTICO LITERAL -->
+    <div id="tab-content" class="tab-content">
+      <div class="section-header">
+        <div>
+          <div class="section-title">Conteúdo Programático Oficial — Cargo 4</div>
+          <div style="font-size:0.68rem; color:var(--text-dim); margin-top:2px;">
+            Clique no tópico: <b>1º clique</b> = Matado | <b>2º clique</b> = Inabilitado | <b>3º clique</b> = Pendente
+          </div>
+        </div>
+        <span class="badge-neon" id="syllabus-progress-tag">0% OK</span>
+      </div>
+      <div id="syllabus-tree"></div>
+    </div>
+
+    <!-- ABA 4: BANCO DE DADOS -->
+    <div id="tab-stats" class="tab-content">
+      <div class="section-title" style="margin-bottom:10px">Banco de Dados & Diagnóstico Cebraspe</div>
+
+      <div class="hud-grid">
+        <div class="hud-box glass"><div class="hud-val" id="hud-time" style="color:#93C5FD">0h</div><div class="hud-label">Horas Líquidas</div></div>
+        <div class="hud-box glass"><div class="hud-val" id="hud-total-q" style="color:#FDE68A">0</div><div class="hud-label">Itens Feitos</div></div>
+        <div class="hud-box glass"><div class="hud-val" id="hud-net-score" style="color:#86EFAC">0</div><div class="hud-label">Saldo (C - E)</div></div>
+        <div class="hud-box glass"><div class="hud-val" id="hud-acc" style="color:var(--gold)">0%</div><div class="hud-label">Rendimento Real</div></div>
+      </div>
+
+      <!-- DISCURSIVA P3 -->
+      <div class="card glass">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <div>
+            <div style="font-size:0.84rem;font-weight:800;color:var(--gold);text-transform:uppercase">Simulado Discursiva P3 (3 Peças — Max: 60 pts)</div>
+            <div style="font-size:0.68rem;color:var(--text-muted)">Q1 (15 pts) + Q2 (15 pts) + Peça Técnica (30 pts) | Mínimo: 30 pts</div>
+          </div>
+          <div id="disc-media-badge" style="font-family:'JetBrains Mono',monospace;font-size:0.76rem;color:var(--gold-light);font-weight:800">Média: --/60</div>
+        </div>
+
+        <div class="p3-inputs-grid">
+          <div>
+            <span class="p3-field-label">Questão 1 (0 a 15,00 pts)</span>
+            <input type="number" id="p3-q1" placeholder="0.00" min="0" max="15" step="0.25" class="dark-input" style="width:100%">
+          </div>
+          <div>
+            <span class="p3-field-label">Questão 2 (0 a 15,00 pts)</span>
+            <input type="number" id="p3-q2" placeholder="0.00" min="0" max="15" step="0.25" class="dark-input" style="width:100%">
+          </div>
+          <div>
+            <span class="p3-field-label">Peça Técnica (0 a 30,00 pts)</span>
+            <input type="number" id="p3-pt" placeholder="0.00" min="0" max="30" step="0.25" class="dark-input" style="width:100%">
+          </div>
+        </div>
+
+        <div style="display:flex;gap:6px;margin-bottom:8px">
+          <input type="text" id="p3-theme" placeholder="Tema simulado..." class="dark-input" style="flex:1">
+          <button class="btn-action success" onclick="saveDiscursiveP3()">Lançar Simulado</button>
+        </div>
+
+        <div class="p3-stats-banner">
+          <div class="p3-stat-item"><div class="p3-stat-val" id="p3-stat-q1" style="color:#EF4444">--</div><div class="p3-stat-lbl">Média Q1 (/15)</div></div>
+          <div class="p3-stat-item"><div class="p3-stat-val" id="p3-stat-q2" style="color:#3B82F6">--</div><div class="p3-stat-lbl">Média Q2 (/15)</div></div>
+          <div class="p3-stat-item"><div class="p3-stat-val" id="p3-stat-pt" style="color:#10B981">--</div><div class="p3-stat-lbl">Média Peça (/30)</div></div>
+          <div class="p3-stat-item"><div class="p3-stat-val" id="p3-stat-pass" style="color:#86EFAC">--%</div><div class="p3-stat-lbl">Aprovação (>30)</div></div>
+        </div>
+
+        <div style="font-size:0.72rem;font-weight:700;color:var(--text-muted);margin:8px 0 4px">
+          Comparativo: <span style="color:#EF4444">■ Q1</span> | <span style="color:#3B82F6">■ Q2</span> | <span style="color:#10B981">■ Peça</span> | <span style="color:#EF4444">--- Corte (30 pts)</span>
+        </div>
+        <div id="disc-chart-box" style="margin-bottom:10px"></div>
+        <div id="disc-history-list"></div>
+      </div>
+
+      <!-- MATRIZ GUT -->
+      <div class="card glass">
+        <div style="font-size:0.84rem;font-weight:800;color:#FDE68A;margin-bottom:6px;text-transform:uppercase">Matriz GUT de Vulnerabilidades</div>
+        <div class="gut-inputs">
+          <input type="text" id="gut-topic" placeholder="Vulnerabilidade / Tópico..." class="dark-input">
+          <select id="gut-g" class="dark-select">
+            <option value="5">G5 (Crítico)</option><option value="4">G4 (Alto)</option>
+            <option value="3" selected>G3 (Médio)</option><option value="2">G2 (Baixo)</option><option value="1">G1 (Leve)</option>
+          </select>
+          <select id="gut-u" class="dark-select">
+            <option value="5">U5 (Imediata)</option><option value="4">U4 (Rápida)</option>
+            <option value="3" selected>U3 (Média)</option><option value="2">U2 (Pode aguardar)</option><option value="1">U1 (Sem pressa)</option>
+          </select>
+          <select id="gut-t" class="dark-select">
+            <option value="5">T5 (Piora rápido)</option><option value="4">T4 (Piora)</option>
+            <option value="3" selected>T3 (Estável)</option><option value="2">T2 (Lenta)</option><option value="1">T1 (Sem piora)</option>
+          </select>
+          <button class="btn-action primary" onclick="addGutItem()">Priorizar</button>
+        </div>
+        <div id="gut-table-render"></div>
+        <div class="admin-tool-box">
+          <b>Ferramentas de Gestão do Edital:</b> Matriz GUT (Gravidade × Urgência × Tendência), Ciclo PDCA e Governança do Decreto nº 9.203/2017.
+        </div>
+      </div>
+
+      <!-- RENDIMENTO POR DISCIPLINA -->
+      <div class="card glass">
+        <div style="font-size:0.80rem;font-weight:800;color:var(--gold);margin-bottom:8px;text-transform:uppercase">Saldo Líquido por Disciplina</div>
+        <div id="subject-performance-list"></div>
+      </div>
+    </div>
+
+    <!-- ABA 5: CRONOGRAMA -->
+    <div id="tab-guide" class="tab-content">
+      <div class="section-header">
+        <div class="section-title">Cronograma Oficial (Anexo I) & Informações</div>
+        <a href="https://www.cebraspe.org.br/concursos/cd_26_analista" target="_blank" rel="noopener noreferrer" class="btn-action primary">Cebraspe Oficial ↗</a>
+      </div>
+
+      <div class="card glass">
+        <div style="font-size:0.80rem;font-weight:800;color:var(--gold);margin-bottom:6px;text-transform:uppercase">Quadro de Vagas — Cargo 4: Arquivologia (Item 4.1)</div>
+        <table class="data-table">
+          <thead>
+            <tr><th>Modalidade</th><th>Imediatas</th><th>CR</th><th>Discursivas Corrigidas</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Ampla Concorrência (AC)</td><td>4</td><td>7</td><td>22</td></tr>
+            <tr><td>Pessoa com Deficiência (PcD)</td><td>1</td><td>*</td><td>22</td></tr>
+            <tr><td>Negros (Pretos e Pardos)</td><td>2</td><td>3</td><td>22</td></tr>
+            <tr><td>Indígenas (PI)</td><td>* Sorteio</td><td>1</td><td>22</td></tr>
+            <tr><td>Quilombolas (PQ)</td><td>* Sorteio</td><td>*</td><td>22</td></tr>
+            <tr style="font-weight:800;color:var(--gold-light)"><td>TOTAL DO CARGO</td><td>7</td><td>11</td><td>Até 110</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card glass">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div style="font-size:0.78rem;font-weight:800;text-transform:uppercase">Checklist de Fases do Cronograma (Anexo I)</div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.78rem;font-weight:800;color:var(--gold)" id="checklist-counter">0 / 22 Concluídas</div>
+        </div>
+        <div id="checklist-container"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- MODAL: CONFIGURAÇÃO DE CÉLULA -->
+  <div class="modal-overlay" id="modal-cell">
+    <div class="modal-panel glass">
+      <div class="modal-top">
+        <h3 id="modal-cell-title">Configurar Missão</h3>
+        <button class="btn-action" style="padding:0 8px" onclick="closeModal('modal-cell')">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="display:flex;gap:6px;margin-bottom:12px">
+          <button class="btn-action" id="btn-mode-single" onclick="setCellConfigMode('single')" style="flex:1">Seleção Única</button>
+          <button class="btn-action" id="btn-mode-tripartite" onclick="setCellConfigMode('tripartite')" style="flex:1">⚡ 3 Partes (Turnos / Combos)</button>
+        </div>
+
+        <div id="panel-single-mode">
+          <div style="font-size:0.72rem;font-weight:800;color:var(--gold);text-transform:uppercase;margin-bottom:6px">Frentes Táticas (Grupos do Edital):</div>
+          <div id="modal-groups-box"></div>
+          <div style="font-size:0.72rem;font-weight:800;color:var(--gold);text-transform:uppercase;margin:12px 0 6px">Operações Táticas Cebraspe:</div>
+          <div id="modal-tactical-box"></div>
+          <div style="margin:10px 0">
+            <div class="option-select-card" id="opt-cell-paused" onclick="selectCellChoice('PAUSA')">
+              <div style="font-weight:900;font-size:0.80rem;color:#9CA3AF">🔒 BLOQUEADO</div>
+              <div style="font-size:0.68rem;color:var(--text-dim)">Pausa programada / Foco restrito e protegido.</div>
+            </div>
+          </div>
+        </div>
+
+        <div id="panel-tripartite-mode" style="display:none">
+          <div style="display:flex;gap:6px;margin-bottom:10px">
+            <button class="btn-action primary" onclick="applyComboTacticalPreset()" style="flex:1;font-size:0.65rem">
+              ⚡ Combo Tático: 1. SIMULADO • 2. DISCURSIVA • 3. REVISÃO
+            </button>
+          </div>
+          <div class="slot-part-card">
+            <div class="slot-part-header"><span>Parte 1 (Turno 1 / Manhã)</span><span id="slot-1-val" style="color:var(--gold)">--</span></div>
+            <select id="select-part-1" class="dark-select" style="width:100%" onchange="updatePartPreview(1)"><option value="">Selecione...</option></select>
+          </div>
+          <div class="slot-part-card">
+            <div class="slot-part-header"><span>Parte 2 (Turno 2 / Tarde)</span><span id="slot-2-val" style="color:var(--gold)">--</span></div>
+            <select id="select-part-2" class="dark-select" style="width:100%" onchange="updatePartPreview(2)"><option value="">Selecione...</option></select>
+          </div>
+          <div class="slot-part-card">
+            <div class="slot-part-header"><span>Parte 3 (Turno 3 / Noite)</span><span id="slot-3-val" style="color:var(--gold)">--</span></div>
+            <select id="select-part-3" class="dark-select" style="width:100%" onchange="updatePartPreview(3)"><option value="">Selecione...</option></select>
+          </div>
+        </div>
+
+        <div style="margin:12px 0 10px">
+          <label style="display:block;font-size:0.72rem;font-weight:700;color:var(--text-muted);margin-bottom:3px">Foco Específico / Anotação Livre:</label>
+          <input type="text" id="modal-custom-text" placeholder="Ex: Meta de itens ou tema..." class="dark-input" style="width:100%">
+        </div>
+
+        <div style="display:flex;gap:6px">
+          <button class="btn-action success" style="flex:1" onclick="saveCellChoice()">Confirmar</button>
+          <button class="btn-action danger" onclick="clearCellChoice()">Limpar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: REGISTRO DE ESTUDO -->
+  <div class="modal-overlay" id="modal-log">
+    <div class="modal-panel glass">
+      <div class="modal-top">
+        <h3>Lançar Estudo Realizado</h3>
+        <button class="btn-action" style="padding:0 8px" onclick="closeModal('modal-log')">✕</button>
+      </div>
+      <div class="modal-body">
+        <label style="display:block;font-size:0.72rem;font-weight:700;color:var(--text-muted);margin-bottom:3px">Tempo Líquido (minutos):</label>
+        <input type="number" id="log-minutes" placeholder="Ex: 90" min="1" class="dark-input" style="width:100%;margin-bottom:8px">
+
+        <label style="display:block;font-size:0.72rem;font-weight:700;color:var(--text-muted);margin-bottom:3px">Disciplina Oficial:</label>
+        <select id="log-subject-select" class="dark-select" style="width:100%;margin-bottom:8px"></select>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+          <div>
+            <label style="display:block;font-size:0.72rem;font-weight:700;color:var(--text-muted);margin-bottom:3px">Itens Resolvidos:</label>
+            <input type="number" id="log-q-total" placeholder="0" min="0" class="dark-input" style="width:100%">
+          </div>
+          <div>
+            <label style="display:block;font-size:0.72rem;font-weight:700;color:var(--text-muted);margin-bottom:3px">Itens Certos:</label>
+            <input type="number" id="log-q-correct" placeholder="0" min="0" class="dark-input" style="width:100%">
+          </div>
+        </div>
+
+        <button class="btn-action success" style="width:100%;margin-top:10px" onclick="saveStudyEntry()">Gravar no Diário</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- NAVEGAÇÃO INFERIOR -->
+  <nav class="bottom-nav glass">
+    <button class="nav-item active" onclick="switchNav('plan')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      <span>Plano</span>
+    </button>
+    <button class="nav-item" onclick="switchNav('mission')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      <span>Missão</span>
+    </button>
+    <button class="nav-item" onclick="switchNav('content')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      <span>Conteúdo</span>
+    </button>
+    <button class="nav-item" onclick="switchNav('stats')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+      <span>Dados</span>
+    </button>
+    <button class="nav-item" onclick="switchNav('guide')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <span>Cronograma</span>
+    </button>
+  </nav>
+
+  <script>
+/**
+ * MOTOR OPERACIONAL — DESTINAÇÃO FINAL
+ */
+const STORAGE_KEY = 'destinacao_final_clean_v19';
+const PREVIOUS_KEYS = [
+  'destinacao_final_clean_v18','destinacao_final_clean_v17','destinacao_final_clean_v16',
+  'destinacao_final_clean_v15','destinacao_final_clean_v14','destinacao_final_clean_v13'
+];
+
+const GROUPS = [
+  { id: 'alfa', code: 'ALFA', name: 'ALFA • LINGUAGEM & DISCURSIVA', color: 'alpha', sub: 'Língua Portuguesa, Língua Inglesa e Discursiva P3' },
+  { id: 'bravo', code: 'BRAVO', name: 'BRAVO • ESTADO & GESTÃO PÚBLICA', color: 'bravo', sub: 'Direito Administrativo, Constitucional, Governança e Regimentos' },
+  { id: 'charlie', code: 'CHARLIE', name: 'CHARLIE • ARQUIVOLOGIA & PRESERVAÇÃO', color: 'charlie', sub: 'Teoria Arquivística, e-ARQ Brasil, NOBRADE, RiC e Preservação' },
+  { id: 'delta', code: 'DELTA', name: 'DELTA • CIÊNCIA DA INFORMAÇÃO', color: 'delta', sub: 'Teoria da Informação, Metadados, Tesauros, Ontologias e Ética' },
+  { id: 'echo', code: 'ECHO', name: 'ECHO • TI, DADOS & GOVERNANÇA', color: 'echo', sub: 'Tecnologia da Informação, Ciência de Dados, IA/RAG e Governança' }
+];
+
+const TACTICAL_OPS = [
+  { id: 'SIMULADO', name: 'SIMULADO COMPLETO (P1 + P2)', desc: '180 itens C/E com cálculo Cebraspe' },
+  { id: 'DISCURSIVA', name: 'PEÇA TÉCNICA / DISCURSIVA (P3)', desc: 'Questão técnica ou parecer discursivo' },
+  { id: 'REVISÃO', name: 'REVISÃO SISTEMÁTICA ATIVA', desc: 'R24h / Caderno de erros e lei seca' },
+  { id: 'FOLGA', name: 'FOLGA ESTRATÉGICA', desc: 'Recuperação física e mental programada' },
+  { id: 'QUESTÕES', name: 'BATERIA DE ITENS CEBRASPE', desc: 'Resolução massiva de questões' }
+];
+
+const OFFICIAL_SUBJECTS = [
+  'Língua Portuguesa', 'Língua Inglesa', 'Noções de Direito Administrativo e Administração Pública',
+  'Noções de Direito Constitucional e de Regimento Interno da Câmara dos Deputados',
+  'Tecnologia da Informação e Dados', 'Ciência da Informação - Gestão, Governança e Ética',
+  'Sistemas Informacionais, Ciência de Dados e Proteção da Informação',
+  'Noções de Tecnologia e Inteligência Artificial Aplicadas à Informação',
+  'Teoria Arquivística, Gestão Documental, Política Arquivística e Legislação Aplicada',
+  'Tratamento, Preservação, Memória e Patrimônio Documental'
+];
+
+const OFFICIAL_CRONOGRAMA = [
+  { id: 'f01', date: '05/10/2026', text: 'Divulgação do edital com informações sobre o sorteio das vagas reservadas (Subitem 5.1.4)' },
+  { id: 'f02', date: '08/10/2026', text: 'Realização e divulgação do resultado provisório do sorteio das vagas reservadas' },
+  { id: 'f03', date: '09 a 13/10/2026', text: 'Prazo para interposição de recursos contra o resultado provisório do sorteio' },
+  { id: 'f04', date: '14/10/2026', text: 'Divulgação do resultado final do sorteio e atualização do quadro de vagas' },
+  { id: 'f05', date: '15 a 23/10/2026', text: 'Período de solicitação de isenção de taxa de inscrição' },
+  { id: 'f06', date: '15/10 a 17/11/2026', text: 'Período oficial de solicitação de inscrições' },
+  { id: 'f07', date: '03 a 05/11/2026', text: 'Consulta à situação provisória da solicitação de isenção de taxa' },
+  { id: 'f08', date: '04 e 05/11/2026', text: 'Prazo para recursos contra o indeferimento da isenção de taxa' },
+  { id: 'f09', date: '12/11/2026', text: 'Consulta à situação final da solicitação de isenção de taxa' },
+  { id: 'f10', date: '18 e 19/11/2026', text: 'Verificação do deferimento da foto e prazo para novo envio no sistema' },
+  { id: 'f11', date: '19/11/2026', text: 'DATA FINAL PARA PAGAMENTO DA TAXA DE INSCRIÇÃO (R$ 130,00)' },
+  { id: 'f12', date: '02 a 04/12/2026', text: 'Consulta à situação provisória do atendimento especializado' },
+  { id: 'f13', date: '03 e 04/12/2026', text: 'Prazo de recursos contra indeferimento do atendimento especializado' },
+  { id: 'f14', date: '14/12/2026', text: 'Consulta à situação final da solicitação de atendimento especializado' },
+  { id: 'f15', date: '22/12/2026', text: 'Divulgação do edital de consulta aos locais e horários de prova' },
+  { id: 'f16', date: '17/01/2027', text: 'DIA D: APLICAÇÃO DAS PROVAS OBJETIVAS (P1 e P2) E DISCURSIVA (P3)' },
+  { id: 'f17', date: '19 a 21/01/2027', text: 'Consulta aos gabaritos oficiais preliminares e padrão da prova discursiva' },
+  { id: 'f18', date: '20 e 21/01/2027', text: 'Prazo para recursos contra gabaritos preliminares e padrão da discursiva' },
+  { id: 'f19', date: '22/01/2027', text: 'Divulgação dos gabaritos oficiais preliminares das provas objetivas' },
+  { id: 'f20', date: '18/02/2027', text: 'Resultado final das provas objetivas e provisório na etapa documental PcD' },
+  { id: 'f21', date: '05/03/2027', text: 'Convocação para heteroidentificação (negros) e verificação indígena/quilombola' },
+  { id: 'f22', date: '30/04/2027', text: 'DIVULGAÇÃO DO RESULTADO FINAL NA PROVA DISCURSIVA E NO CONCURSO' }
+];
+
+const MISSIONS = [
+  { id: 'm1', name: 'Revisão R24h Cumprida', points: 15 },
+  { id: 'm2', name: 'Bateria de 50 Itens C/E', points: 25 },
+  { id: 'm3', name: '4 Horas Líquidas de Foco', points: 30 },
+  { id: 'm4', name: 'Peça Técnica / Parecer Escrito', points: 50 },
+  { id: 'm5', name: 'Simulado Cebraspe Batido', points: 70 }
+];
+
+const CONTENT_TREE = [
+  {
+    group: '14.2.3 CONHECIMENTOS BÁSICOS (PROVA OBJETIVA P1 — 90 ITENS)',
+    subjects: [
+      {
+        name: 'Língua Portuguesa',
+        topics: [
+          '1. Compreensão e interpretação de textos de gêneros variados.',
+          '2. Reconhecimento de tipos e gêneros textuais.',
+          '3. Domínio da ortografia oficial.',
+          '4. Domínio dos mecanismos de coesão textual (referenciação, conectores, tempos verbais).',
+          '5. Domínio da estrutura morfossintática do período (classes, coordenação, subordinação, pontuação, concordância, regência, crase, pronomes).',
+          '6. Reescrita de frases e parágrafos do texto (significação, substituição, reorganização sintática).'
+        ]
+      },
+      {
+        name: 'Língua Inglesa',
+        topics: [
+          '1. Compreensão de textos variados (vocabulário, ideias principais/secundárias, relações intratextuais).',
+          '2. Itens gramaticais relevantes para compreensão de conteúdos semânticos.',
+          '3. Conhecimento e uso das formas contemporâneas da linguagem inglesa.'
+        ]
+      },
+      {
+        name: 'Noções de Direito Administrativo e Administração Pública',
+        topics: [
+          '1. Estado, governo e Administração Pública: conceito, elementos, poderes, direta/indireta.',
+          '2. Ato administrativo: conceito, requisitos, atributos, espécies, extinção e pareceres.',
+          '3. Agentes públicos e Regime jurídico dos servidores federais (Lei nº 8.112/1990 e alterações).',
+          '4. Direito administrativo disciplinar e Processo Administrativo Federal (Lei nº 9.784/1999).',
+          '5. Poderes administrativos (discricionário, hierárquico, disciplinar, regulamentar, polícia, uso/abuso).',
+          '6. Responsabilidade civil do Estado (comissiva, omissiva, requisitos, excludentes).',
+          '7. Improbidade Administrativa (Lei nº 8.429/1992 e alterações).',
+          '8. Modelos de gestão pública (patrimonialismo, burocracia, New Public Management, New Public Governance, coprodução, valor público).',
+          '9. Governança na Administração Pública (mecanismos: liderança, estratégia, controle; Decreto nº 9.203/2017).',
+          '10. Noções de Licitações e Contratos (Lei nº 14.133/2021: modalidades, dispensa/inexigibilidade, fiscalização, ETP e TR).',
+          '11. Lei de Acesso à Informação (Lei nº 12.527/2011 e alterações).',
+          '12. Lei Geral de Proteção de Dados Pessoais - LGPD (Lei nº 13.709/2018 e alterações).'
+        ]
+      },
+      {
+        name: 'Noções de Direito Constitucional e de Regimento Interno da Câmara dos Deputados',
+        topics: [
+          '1. CF/88: conceito, contexto histórico, características, estrutura do texto.',
+          '2. Princípios fundamentais e Direitos e garantias fundamentais.',
+          '3. Organização do Estado (União, estados, DF, municípios, intervenção federal).',
+          '4. Administração pública na CF/88 (disposições gerais e servidores).',
+          '5. Poder Legislativo (Congresso Nacional, atribuições, reuniões, comissões).',
+          '6. Regime jurídico-constitucional dos parlamentares.',
+          '7. Regimento Interno da Câmara dos Deputados (Resolução nº 17/1989: arts. 1º a 24, 65 a 94, 226 a 251, 262 a 273).',
+          '8. Regimento Comum do Congresso Nacional (Resolução nº 1/1970-CN: Título I e Título IV até art. 103).'
+        ]
+      },
+      {
+        name: 'Tecnologia da Informação e Dados',
+        topics: [
+          '1. MSOffice 365 (Word, Excel, PowerPoint e OneDrive).',
+          '2. Redes de computadores (conceitos básicos, ferramentas, Internet e intranet).',
+          '3. Ferramentas de comunicação e colaboração (e-mail, Teams, Google Meet).',
+          '4. Segurança e governança digital (backup, vírus, firewall, phishing, pharming).',
+          '5. Conceitos básicos de inteligência artificial (prompts, aprendizado supervisionado/reforço, IA generativa).',
+          '6. Ética e responsabilidade digital no serviço público.',
+          '7. Dados (conceitos, atributos, métricas, transformação de dados).',
+          '8. Visualização de dados (gráficos, Power BI, Tableau, Data Studio, Storytelling).'
+        ]
+      }
+    ]
+  },
+  {
+    group: '14.2.4 CONHECIMENTOS ESPECÍFICOS (PROVAS P2 E P3) — CARGO 4: ARQUIVOLOGIA',
+    subjects: [
+      {
+        name: 'Ciência da Informação - Gestão, Governança e Ética',
+        topics: [
+          '1. Ciência da Informação (dado, informação, documento, conhecimento, ciclo de vida, memória institucional).',
+          '2. Governança da informação e de dados (data ownership, stewardship, proveniência, catálogos, dados abertos).',
+          '3. Organização do conhecimento (metadados descritivos/técnicos, vocabulários controlados, tesauros, taxonomias, ontologias).',
+          '4. Transparência e ética da informação (acesso, restrição, sigilo e ética profissional).'
+        ]
+      },
+      {
+        name: 'Sistemas Informacionais, Ciência de Dados e Proteção da Informação',
+        topics: [
+          '1. Sistemas de informação (requisitos, modelagem conceitual, bancos relacionais e não relacionais, usabilidade/acessibilidade).',
+          '2. Ciência de Dados aplicada à informação (limpeza, estatística descritiva, dashboards, mineração de textos, vieses).',
+          '3. Recuperação da informação (indexação manual/automática, operadores booleanos, precisão e revocação).',
+          '4. Segurança e privacidade (criptografia, hash, assinatura digital, gestão de riscos informacionais).'
+        ]
+      },
+      {
+        name: 'Noções de Tecnologia e Inteligência Artificial Aplicadas à Informação',
+        topics: [
+          '1. Fundamentos computacionais (pensamento computacional, lógica, SQL, expressões regulares, APIs, web scraping).',
+          '2. Inteligência Artificial aplicada à informação (OCR/HTR, LLMs, RAG, curadoria de datasets, alucinação, supervisão profissional, LGPD).'
+        ]
+      },
+      {
+        name: 'Teoria Arquivística, Gestão Documental, Política Arquivística e Legislação Aplicada',
+        topics: [
+          '1. Teoria arquivística (princípios arquivísticos, ciclo vital, records continuum, fundos, diplomática documental e digital).',
+          '2. Gestão arquivística de documentos (política, diagnóstico, análise funcional, plano de classificação, tabela de temporalidade, destinação).',
+          '3. Documentos digitais e sistemas (SIGAD, GED, ECM, e-ARQ Brasil versão vigente, requisitos, metadados, trilhas de auditoria).',
+          '4. Legislação e política arquivística (CF/88, Lei nº 8.159/1991, SINAR, CONARQ, Resolução nº 29/1993-CD, Atos da Mesa da CD, ICP-Brasil).'
+        ]
+      },
+      {
+        name: 'Tratamento, Preservação, Memória e Patrimônio Documental',
+        topics: [
+          '1. Descrição arquivística e representação contextual (arranjo, multinível, NOBRADE, ISAD(G), ISAAR(CPF), RiC, Linked Data).',
+          '2. Preservação física e digital (conservação preventiva, obsolescência, modelo OAIS, PREMIS, RDC-Arq, Archivematica, AtoM, mídias dinâmicas).',
+          '3. Arquivos permanentes, memória e patrimônio documental (pesquisa histórica, curadoria, difusão cultural, história oral).'
+        ]
+      }
+    ]
+  }
+];
+
+let state = {
+  weeks: 14, schedule: {}, studyLogs: [], discursiveLogs: [],
+  gutItems: [], missionsCount: {}, checklistDone: {}, topicProgress: {},
+  timerSec: 0, timerActive: false
+};
+
+let timerInterval = null;
+let activeCellId = null;
+let currentCellChoice = null;
+let modalCurrentMode = 'single';
+
+function init() {
+  loadData();
+  startCountdown();
+  renderSchedule();
+  renderChecklist();
+  renderMissions();
+  renderSyllabus();
+  renderStats();
+  populateSubjects();
+  setupFullscreenListener();
+  loadAssetsDirectly();
+}
+
+function loadData() {
+  try {
+    let saved = localStorage.getItem(STORAGE_KEY);
+    if (!saved) {
+      for (const k of PREVIOUS_KEYS) {
+        saved = localStorage.getItem(k);
+        if (saved) break;
+      }
+    }
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (parsed && typeof parsed === 'object') state = { ...state, ...parsed };
+    }
+  } catch(e) { console.error(e); }
+}
+
+function saveData() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) { console.error(e); }
+}
+
+function loadAssetsDirectly() {
+  const imgW = document.getElementById('img-watermark');
+  if (imgW && (!imgW.complete || imgW.naturalWidth === 0)) {
+    cycleWatermarkFallback(imgW);
+  }
+  const imgB = document.getElementById('img-banner');
+  if (imgB && (!imgB.complete || imgB.naturalWidth === 0)) {
+    cycleBannerFallback(imgB);
+  }
+}
+
+function toggleAppFullscreen() {
+  const doc = document;
+  const docEl = document.documentElement;
+  const isFull = doc.fullscreenElement || doc.webkitFullscreenElement || doc.mozFullScreenElement || doc.msFullscreenElement;
+
+  if (!isFull) {
+    if (docEl.requestFullscreen) docEl.requestFullscreen().catch(() => {});
+    else if (docEl.webkitRequestFullscreen) docEl.webkitRequestFullscreen();
+    else if (docEl.mozRequestFullScreen) docEl.mozRequestFullScreen();
+    else if (docEl.msRequestFullscreen) docEl.msRequestFullscreen();
+  } else {
+    if (doc.exitFullscreen) doc.exitFullscreen().catch(() => {});
+    else if (doc.webkitExitFullscreen) doc.webkitExitFullscreen();
+    else if (doc.mozCancelFullScreen) doc.mozCancelFullScreen();
+    else if (doc.msExitFullscreen) doc.msExitFullscreen();
+  }
+}
+
+function setupFullscreenListener() {
+  const handler = () => {
+    const isFull = document.fullscreenElement || document.webkitFullscreenElement;
+    const svgEl = document.getElementById('fs-svg');
+    if (svgEl) {
+      svgEl.innerHTML = isFull 
+        ? '<path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/>'
+        : '<path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>';
+    }
+  };
+  document.addEventListener('fullscreenchange', handler);
+  document.addEventListener('webkitfullscreenchange', handler);
+}
+
+function startCountdown() {
+  const update = () => {
+    const el = document.getElementById('cd-display');
+    if (!el) return;
+    const target = Date.UTC(2027, 0, 17, 11, 0, 0);
+    const diff = target - Date.now();
+    if (diff <= 0) { el.textContent = 'PROVA: HOJE'; return; }
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    el.textContent = `PROVA: ${days}d`;
+  };
+  update();
+  setInterval(update, 60000);
+}
+
+function timerStart() {
+  if (state.timerActive) return;
+  state.timerActive = true;
+  document.getElementById('timer-beacon')?.classList.add('active');
+  timerInterval = setInterval(() => {
+    state.timerSec++;
+    updateTimerReadout();
+  }, 1000);
+}
+
+function timerPause() {
+  if (!state.timerActive) return;
+  clearInterval(timerInterval);
+  state.timerActive = false;
+  document.getElementById('timer-beacon')?.classList.remove('active');
+}
+
+function timerStop(autoLog = false) {
+  timerPause();
+  if (autoLog) openLogModal(Math.floor(state.timerSec / 60));
+}
+
+function timerReset() {
+  if (!confirm('Deseja zerar o cronômetro?')) return;
+  timerPause();
+  state.timerSec = 0;
+  updateTimerReadout();
+}
+
+function updateTimerReadout() {
+  const s = state.timerSec;
+  const h = String(Math.floor(s / 3600)).padStart(2, '0');
+  const m = String(Math.floor((s % 3600) / 60)).padStart(2, '0');
+  const sec = String(s % 60).padStart(2, '0');
+  const el = document.getElementById('timer-display');
+  if (el) el.textContent = `${h}:${m}:${sec}`;
+}
+
+function getRangeStr(w) {
+  const start = new Date('2026-10-12T00:00:00-03:00');
+  start.setDate(start.getDate() + (w - 1) * 7);
+  return `${String(start.getDate()).padStart(2,'0')}/${String(start.getMonth()+1).padStart(2,'0')}`;
+}
+
+function renderSchedule() {
+  const tbody = document.getElementById('table-schedule-body');
+  if (!tbody) return;
+  let html = '';
+  const days = ['seg','ter','qua','qui','sex','sab','dom'];
+
+  for (let w = 1; w <= state.weeks; w++) {
+    html += `<tr>`;
+    html += `<td><div class="week-header-cell">S${w}<span class="week-date-span">${getRangeStr(w)}</span></div></td>`;
+
+    days.forEach(d => {
+      const key = `s${w}_${d}`;
+
+      if (w === 14 && d === 'dom') {
+        html += `<td><div class="cell-button special-exam" onclick="alert('17/01/2027: DIA D DA SUA VITÓRIA NA CÂMARA!')"><span>PROVA</span></div></td>`;
+      } else if (w === 14 && (d === 'sex' || d === 'sab')) {
+        html += `<td><div class="cell-button special-blindagem" onclick="openCellModal('${key}')"><span>BLINDAGEM MENTAL</span></div></td>`;
+      } else if (
+        (w === 11 && (d === 'sab' || d === 'dom')) ||
+        w === 12 || w === 13 ||
+        (w === 14 && ['seg','ter','qua','qui'].includes(d))
+      ) {
+        const item = state.schedule[key];
+        if (item) {
+          const res = parseCell(item);
+          html += `<td><div class="cell-button ${res.css}" onclick="openCellModal('${key}')">${res.html}</div></td>`;
+        } else {
+          html += `<td><div class="cell-button special-rev-final" onclick="openCellModal('${key}')"><span>REVISÃO FINAL</span></div></td>`;
+        }
+      } else if (w === 3 && (d === 'qua' || d === 'qui')) {
+        const item = state.schedule[key];
+        const res = parseCell(item);
+        html += `<td><div class="cell-button ${res.css}" onclick="openCellModal('${key}')">${res.html}</div></td>`;
+      } else {
+        const item = state.schedule[key] || state.schedule[`c${w}_${d}`] || state.schedule[`w${w}_${d}`];
+        const res = parseCell(item);
+        html += `<td><div class="cell-button ${res.css}" onclick="openCellModal('${key}')">${res.html}</div></td>`;
+      }
+    });
+
+    html += `</tr>`;
+  }
+  tbody.innerHTML = html;
+}
+
+function parseCell(item) {
+  if (!item) return { label: '+', css: 'empty', html: '<span>+</span>' };
+
+  if (typeof item === 'object' && item.parts && Array.isArray(item.parts) && item.parts.length > 0) {
+    let partsHtml = '';
+    item.parts.forEach((p, idx) => {
+      if (!p) return;
+      const subInfo = getSubItemInfo(p);
+      partsHtml += `<span class="cell-part-badge-white">${idx+1}. ${subInfo.label}</span>`;
+    });
+    if (item.custom) {
+      partsHtml += `<span style="font-size:0.54rem;color:var(--text-muted);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(item.custom)}</span>`;
+    }
+    return { label: '3 PARTES', css: 'multi-part-cell', html: partsHtml || '<span>+</span>' };
+  }
+
+  let sel = (typeof item === 'string') ? item : item.selection;
+  let custom = (typeof item === 'object' && item.custom) ? ' • ' + item.custom : '';
+
+  if (sel === 'PAUSA') return { label: 'BLOQUEADO' + custom, css: 'locked-cell', html: `<span>BLOQUEADO${escapeHtml(custom)}</span>` };
+  if (sel === 'REVISÃO' || sel === 'REV') return { label: 'REVISÃO' + custom, css: 'special-rev', html: `<span>REVISÃO${escapeHtml(custom)}</span>` };
+  if (sel === 'FOLGA') return { label: 'FOLGA' + custom, css: 'special-rest', html: `<span>FOLGA${escapeHtml(custom)}</span>` };
+
+  const g = GROUPS.find(x => x.id === sel);
+  if (g) return { label: g.code + custom, css: g.color, html: `<span>${g.code}${escapeHtml(custom)}</span>` };
+
+  const tac = TACTICAL_OPS.find(x => x.id === sel);
+  if (tac) {
+    if (tac.id === 'REVISÃO') return { label: 'REVISÃO' + custom, css: 'special-rev', html: `<span>REVISÃO${escapeHtml(custom)}</span>` };
+    if (tac.id === 'FOLGA') return { label: 'FOLGA' + custom, css: 'special-rest', html: `<span>FOLGA${escapeHtml(custom)}</span>` };
+    return { label: tac.id + custom, css: 'tactical-sim', html: `<span>${tac.id}${escapeHtml(custom)}</span>` };
+  }
+
+  if (custom) return { label: custom.replace(' • ', ''), css: 'tactical-sim', html: `<span>${escapeHtml(custom.replace(' • ', ''))}</span>` };
+  return { label: '+', css: 'empty', html: '<span>+</span>' };
+}
+
+function getSubItemInfo(val) {
+  if (val === 'PAUSA') return { label: 'BLOQUEADO' };
+  if (val === 'REVISÃO' || val === 'REV') return { label: 'REVISÃO' };
+  if (val === 'FOLGA') return { label: 'FOLGA' };
+  if (val === 'SIMULADO' || val === 'SIM') return { label: 'SIMULADO' };
+  if (val === 'DISCURSIVA' || val === 'DISC') return { label: 'DISCURSIVA' };
+  if (val === 'QUESTÕES' || val === 'QST') return { label: 'QUESTÕES' };
+
+  const g = GROUPS.find(x => x.id === val);
+  if (g) return { label: g.code };
+  const tac = TACTICAL_OPS.find(x => x.id === val);
+  if (tac) return { label: tac.id };
+  return { label: val };
+}
+
+function addWeek() {
+  if (state.weeks >= 24) return;
+  state.weeks++;
+  saveData();
+  renderSchedule();
+}
+
+function removeWeek() {
+  if (state.weeks <= 2) return;
+  state.weeks--;
+  saveData();
+  renderSchedule();
+}
+
+function openCellModal(cid) {
+  activeCellId = cid;
+  const item = state.schedule[cid] || state.schedule[cid.replace('s','c')] || state.schedule[cid.replace('s','w')] || {};
+  
+  document.getElementById('modal-cell-title').textContent = `Configurar — ${cid.toUpperCase().replace('_',' ')}`;
+  document.getElementById('modal-custom-text').value = item.custom || '';
+
+  populatePartSelects();
+
+  if (item.parts && Array.isArray(item.parts)) {
+    modalCurrentMode = 'tripartite';
+    document.getElementById('select-part-1').value = item.parts[0] || '';
+    document.getElementById('select-part-2').value = item.parts[1] || '';
+    document.getElementById('select-part-3').value = item.parts[2] || '';
+    updatePartPreview(1); updatePartPreview(2); updatePartPreview(3);
+  } else {
+    modalCurrentMode = 'single';
+    currentCellChoice = item.selection || (typeof item === 'string' ? item : null);
+  }
+
+  setCellConfigMode(modalCurrentMode);
+  renderModalOptions();
+  openModal('modal-cell');
+}
+
+function populatePartSelects() {
+  let optionsHtml = '<option value="">(Vazio)</option><optgroup label="Frentes Táticas">';
+  GROUPS.forEach(g => { optionsHtml += `<option value="${g.id}">[${g.code}] ${g.name}</option>`; });
+  optionsHtml += '</optgroup><optgroup label="Operações Cebraspe">';
+  TACTICAL_OPS.forEach(t => { optionsHtml += `<option value="${t.id}">${t.name}</option>`; });
+  optionsHtml += '<option value="PAUSA">BLOQUEADO</option></optgroup>';
+
+  for (let i = 1; i <= 3; i++) {
+    const sel = document.getElementById(`select-part-${i}`);
+    if (sel) sel.innerHTML = optionsHtml;
+  }
+}
+
+function setCellConfigMode(mode) {
+  modalCurrentMode = mode;
+  const btnSingle = document.getElementById('btn-mode-single');
+  const btnTri = document.getElementById('btn-mode-tripartite');
+  const pSingle = document.getElementById('panel-single-mode');
+  const pTri = document.getElementById('panel-tripartite-mode');
+
+  if (mode === 'single') {
+    btnSingle.classList.add('primary'); btnTri.classList.remove('primary');
+    pSingle.style.display = 'block'; pTri.style.display = 'none';
+  } else {
+    btnSingle.classList.remove('primary'); btnTri.classList.add('primary');
+    pSingle.style.display = 'none'; pTri.style.display = 'block';
+  }
+}
+
+function updatePartPreview(partNum) {
+  const sel = document.getElementById(`select-part-${partNum}`);
+  const val = sel ? sel.value : '';
+  const info = getSubItemInfo(val);
+  const badge = document.getElementById(`slot-${partNum}-val`);
+  if (badge) badge.textContent = val ? info.label : '--';
+}
+
+function applyComboTacticalPreset() {
+  setCellConfigMode('tripartite');
+  document.getElementById('select-part-1').value = 'SIMULADO';
+  document.getElementById('select-part-2').value = 'DISCURSIVA';
+  document.getElementById('select-part-3').value = 'REVISÃO';
+  updatePartPreview(1); updatePartPreview(2); updatePartPreview(3);
+}
+
+function renderModalOptions() {
+  const gBox = document.getElementById('modal-groups-box');
+  if (gBox) {
+    gBox.innerHTML = GROUPS.map(g => `
+      <div class="option-select-card ${currentCellChoice === g.id ? 'selected' : ''}" onclick="selectCellChoice('${g.id}')">
+        <div style="font-weight:800;font-size:0.76rem;color:var(--text)">[${g.code}] ${g.name} ${currentCellChoice === g.id ? '✓' : ''}</div>
+        <div style="font-size:0.65rem;color:var(--text-muted);margin-top:2px">${g.sub}</div>
+      </div>
+    `).join('');
+  }
+
+  const tBox = document.getElementById('modal-tactical-box');
+  if (tBox) {
+    tBox.innerHTML = TACTICAL_OPS.map(t => {
+      let colorTag = 'var(--gold-light)';
+      if (t.id === 'REVISÃO') colorTag = '#5EEAD4';
+      if (t.id === 'FOLGA') colorTag = '#22C55E';
+      return `
+        <div class="option-select-card ${currentCellChoice === t.id ? 'selected' : ''}" onclick="selectCellChoice('${t.id}')">
+          <div style="font-weight:800;font-size:0.76rem;color:${colorTag}">${t.name} ${currentCellChoice === t.id ? '✓' : ''}</div>
+          <div style="font-size:0.65rem;color:var(--text-muted);margin-top:2px">${t.desc}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  const pauseEl = document.getElementById('opt-cell-paused');
+  if (pauseEl) pauseEl.classList.toggle('selected', currentCellChoice === 'PAUSA');
+}
+
+function selectCellChoice(id) {
+  currentCellChoice = (currentCellChoice === id) ? null : id;
+  renderModalOptions();
+}
+
+function saveCellChoice() {
+  if (!activeCellId) return;
+  const custom = document.getElementById('modal-custom-text').value.trim();
+
+  if (modalCurrentMode === 'tripartite') {
+    const p1 = document.getElementById('select-part-1').value;
+    const p2 = document.getElementById('select-part-2').value;
+    const p3 = document.getElementById('select-part-3').value;
+    const parts = [p1, p2, p3].filter(Boolean);
+
+    if (parts.length === 0 && !custom) {
+      delete state.schedule[activeCellId];
+    } else {
+      state.schedule[activeCellId] = { parts: parts, custom: custom };
+    }
+  } else {
+    if (!currentCellChoice && !custom) {
+      delete state.schedule[activeCellId];
+    } else {
+      state.schedule[activeCellId] = { selection: currentCellChoice, custom: custom };
+    }
+  }
+
+  saveData();
+  renderSchedule();
+  closeModal('modal-cell');
+}
+
+function clearCellChoice() {
+  if (!activeCellId) return;
+  delete state.schedule[activeCellId];
+  saveData();
+  renderSchedule();
+  closeModal('modal-cell');
+}
+
+function renderChecklist() {
+  const container = document.getElementById('checklist-container');
+  if (!container) return;
+  let doneCount = 0;
+
+  container.innerHTML = OFFICIAL_CRONOGRAMA.map(item => {
+    const isDone = !!state.checklistDone[item.id];
+    if (isDone) doneCount++;
+    return `
+      <div class="check-item ${isDone ? 'done' : ''}" onclick="toggleChecklistPhase('${item.id}')">
+        <div class="check-box">${isDone ? '✓' : ''}</div>
+        <div class="check-date">${item.date}</div>
+        <div class="check-desc">${item.text}</div>
+      </div>
+    `;
+  }).join('');
+
+  const counterEl = document.getElementById('checklist-counter');
+  if (counterEl) counterEl.textContent = `${doneCount} / ${OFFICIAL_CRONOGRAMA.length} Concluídas`;
+}
+
+function toggleChecklistPhase(id) {
+  state.checklistDone[id] = !state.checklistDone[id];
+  saveData();
+  renderChecklist();
+}
+
+function renderSyllabus() {
+  const container = document.getElementById('syllabus-tree');
+  if (!container) return;
+  let total = 0, done = 0;
+  let html = '';
+
+  CONTENT_TREE.forEach((group, gIdx) => {
+    html += `<div style="margin-bottom:14px">
+      <div style="font-size:0.76rem;font-weight:900;color:var(--gold);letter-spacing:0.04em;margin-bottom:6px">${group.group}</div>`;
+    
+    group.subjects.forEach((subj, sIdx) => {
+      const cardId = `sub_${gIdx}_${sIdx}`;
+      html += `
+        <div class="subject-card glass">
+          <div class="subject-header" onclick="document.getElementById('${cardId}').classList.toggle('open')">
+            <span style="font-size:0.78rem;font-weight:800;color:#F3F4F6">${subj.name}</span>
+            <span style="font-family:'JetBrains Mono',monospace;font-size:0.68rem;color:var(--text-muted)">${subj.topics.length} TÓPICOS</span>
+          </div>
+          <div class="subject-body" id="${cardId}">
+      `;
+      
+      subj.topics.forEach(t => {
+        total++;
+        const key = `${subj.name}|${t}`;
+        const rawStatus = state.topicProgress[key] || 0;
+        const statusVal = (typeof rawStatus === 'object') ? (rawStatus.status || 0) : rawStatus;
+
+        if (statusVal === 1) done++;
+
+        let rowClass = '';
+        let pillClass = 'pill-pending';
+        let pillText = 'PENDENTE';
+
+        if (statusVal === 1) {
+          rowClass = 'status-done'; pillClass = 'pill-done'; pillText = 'MATADO';
+        } else if (statusVal === 2) {
+          rowClass = 'status-disabled'; pillClass = 'pill-disabled'; pillText = 'INABILITADO';
+        }
+
+        html += `
+          <div class="topic-interactive-row ${rowClass}" onclick="cycleTopicDirectStatus('${escapeQuotes(key)}')">
+            <div class="topic-main-text">${t}</div>
+            <div class="topic-status-pill ${pillClass}">${pillText}</div>
+          </div>
+        `;
+      });
+      html += `</div></div>`;
+    });
+    html += `</div>`;
+  });
+
+  container.innerHTML = html;
+  const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+  const tag = document.getElementById('syllabus-progress-tag');
+  if (tag) tag.textContent = `${pct}% OK`;
+}
+
+function cycleTopicDirectStatus(key) {
+  const current = (typeof state.topicProgress[key] === 'object') 
+    ? (state.topicProgress[key].status || 0) 
+    : (state.topicProgress[key] || 0);
+
+  state.topicProgress[key] = (current + 1) % 3;
+  saveData();
+  renderSyllabus();
+}
+
+function populateSubjects() {
+  const sel = document.getElementById('log-subject-select');
+  if (!sel) return;
+  sel.innerHTML = OFFICIAL_SUBJECTS.map(s => `<option value="${s}">${s}</option>`).join('');
+}
+
+function openLogModal(timeDefault = '') {
+  document.getElementById('log-minutes').value = timeDefault || '';
+  document.getElementById('log-q-total').value = '';
+  document.getElementById('log-q-correct').value = '';
+  openModal('modal-log');
+}
+
+function saveStudyEntry() {
+  const minutes = parseInt(document.getElementById('log-minutes').value) || 0;
+  const subj = document.getElementById('log-subject-select').value;
+  const total = parseInt(document.getElementById('log-q-total').value) || 0;
+  const correct = parseInt(document.getElementById('log-q-correct').value) || 0;
+
+  if (minutes <= 0) { alert('Informe os minutos líquidos.'); return; }
+  if (correct > total) { alert('Acertos não podem superar o total de itens.'); return; }
+
+  const wrong = total - correct;
+  const net = correct - wrong;
+
+  state.studyLogs.push({
+    id: Date.now(),
+    date: new Date().toLocaleDateString('pt-BR'),
+    minutes, subject: subj, total, correct, wrong, net
+  });
+
+  saveData();
+  renderStats();
+  closeModal('modal-log');
+}
+
+function renderStats() {
+  const logs = state.studyLogs || [];
+  let tMin = 0, tQ = 0, tC = 0, tW = 0;
+
+  logs.forEach(l => {
+    tMin += (l.minutes || 0);
+    tQ += (l.total || 0);
+    tC += (l.correct || 0);
+    tW += (l.wrong || 0);
+  });
+
+  const net = tC - tW;
+  const acc = tQ > 0 ? Math.round((net / tQ) * 100) : 0;
+
+  document.getElementById('hud-time').textContent = `${Math.floor(tMin / 60)}h ${tMin % 60}m`;
+  document.getElementById('hud-total-q').textContent = tQ;
+  const netEl = document.getElementById('hud-net-score');
+  netEl.textContent = `${net > 0 ? '+' : ''}${net}`;
+  netEl.style.color = net >= 0 ? '#86EFAC' : '#FCA5A5';
+  document.getElementById('hud-acc').textContent = `${acc}%`;
+
+  const subMap = {};
+  OFFICIAL_SUBJECTS.forEach(s => subMap[s] = { min: 0, q: 0, c: 0, w: 0 });
+  logs.forEach(l => {
+    if (!subMap[l.subject]) subMap[l.subject] = { min: 0, q: 0, c: 0, w: 0 };
+    subMap[l.subject].min += l.minutes;
+    subMap[l.subject].q += l.total;
+    subMap[l.subject].c += l.correct;
+    subMap[l.subject].w += l.wrong;
+  });
+
+  const subContainer = document.getElementById('subject-performance-list');
+  if (subContainer) {
+    subContainer.innerHTML = OFFICIAL_SUBJECTS.map(s => {
+      const d = subMap[s];
+      const sNet = d.c - d.w;
+      return `
+        <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04)">
+          <div>
+            <div style="font-size:0.76rem;font-weight:700">${s}</div>
+            <div style="font-size:0.65rem;color:var(--text-muted)">${Math.floor(d.min/60)}h${d.min%60}m • ${d.q} itens (${d.c} C / ${d.w} E)</div>
+          </div>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:0.80rem;font-weight:700;color:${sNet >= 0 ? '#86EFAC' : '#FCA5A5'}">
+            ${sNet > 0 ? '+' : ''}${sNet} pts
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  renderGut();
+  renderDiscursive();
+}
+
+function addGutItem() {
+  const topic = document.getElementById('gut-topic').value.trim();
+  const g = parseInt(document.getElementById('gut-g').value) || 3;
+  const u = parseInt(document.getElementById('gut-u').value) || 3;
+  const t = parseInt(document.getElementById('gut-t').value) || 3;
+  if (!topic) { alert('Informe a vulnerabilidade.'); return; }
+
+  state.gutItems.push({ id: Date.now(), topic, g, u, t, score: g * u * t });
+  document.getElementById('gut-topic').value = '';
+  saveData();
+  renderGut();
+}
+
+function removeGutItem(id) {
+  state.gutItems = state.gutItems.filter(x => x.id !== id);
+  saveData();
+  renderGut();
+}
+
+function renderGut() {
+  const box = document.getElementById('gut-table-render');
+  if (!box) return;
+  const items = [...(state.gutItems || [])].sort((a,b) => b.score - a.score);
+  if (!items.length) {
+    box.innerHTML = '<div style="font-size:0.72rem;color:var(--text-dim);text-align:center;padding:6px">Nenhum ponto crítico registrado.</div>';
+    return;
+  }
+  box.innerHTML = `
+    <table class="data-table">
+      <thead><tr>
+        <th>Vulnerabilidade</th><th>G</th><th>U</th><th>T</th><th>Score</th><th></th>
+      </tr></thead>
+      <tbody>
+        ${items.map(it => `
+          <tr>
+            <td style="font-weight:600;font-size:0.76rem;color:#F3F4F6">${escapeHtml(it.topic)}</td>
+            <td style="color:#9CA3AF">${it.g}</td><td style="color:#9CA3AF">${it.u}</td><td style="color:#9CA3AF">${it.t}</td>
+            <td><span class="badge-neon" style="color:#FCA5A5">${it.score}</span></td>
+            <td><button onclick="removeGutItem(${it.id})" style="background:none;border:none;color:#EF4444;cursor:pointer">✕</button></td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  `;
+}
+
+function saveDiscursiveP3() {
+  const q1 = parseFloat(document.getElementById('p3-q1').value) || 0;
+  const q2 = parseFloat(document.getElementById('p3-q2').value) || 0;
+  const pt = parseFloat(document.getElementById('p3-pt').value) || 0;
+  const theme = document.getElementById('p3-theme').value.trim() || 'Simulado Geral P3';
+
+  if (q1 < 0 || q1 > 15 || q2 < 0 || q2 > 15 || pt < 0 || pt > 30) {
+    alert('Limites Oficiais: Q1 (0 a 15), Q2 (0 a 15) e Peça Técnica (0 a 30).');
+    return;
+  }
+
+  state.discursiveLogs.push({
+    id: Date.now(), date: new Date().toLocaleDateString('pt-BR'),
+    q1, q2, pt, total: q1 + q2 + pt, theme
+  });
+
+  document.getElementById('p3-q1').value = '';
+  document.getElementById('p3-q2').value = '';
+  document.getElementById('p3-pt').value = '';
+  document.getElementById('p3-theme').value = '';
+  saveData();
+  renderDiscursive();
+}
+
+function renderDiscursive() {
+  const list = state.discursiveLogs || [];
+  const badge = document.getElementById('disc-media-badge');
+  const chartBox = document.getElementById('disc-chart-box');
+  const historyBox = document.getElementById('disc-history-list');
+
+  if (!list.length) {
+    if (badge) badge.textContent = 'Média: --/60';
+    if (chartBox) chartBox.innerHTML = '';
+    if (historyBox) historyBox.innerHTML = '<div style="font-size:0.72rem;color:var(--text-dim);text-align:center;padding:6px">Nenhum simulado lançado.</div>';
+    return;
+  }
+
+  const count = list.length;
+  let sumQ1 = 0, sumQ2 = 0, sumPT = 0, sumTotal = 0, passedCount = 0;
+
+  list.forEach(item => {
+    sumQ1 += item.q1; sumQ2 += item.q2; sumPT += item.pt; sumTotal += item.total;
+    if (item.total >= 30.0) passedCount++;
+  });
+
+  const avgTotal = sumTotal / count;
+  document.getElementById('p3-stat-q1').textContent = (sumQ1 / count).toFixed(1);
+  document.getElementById('p3-stat-q2').textContent = (sumQ2 / count).toFixed(1);
+  document.getElementById('p3-stat-pt').textContent = (sumPT / count).toFixed(1);
+  document.getElementById('p3-stat-pass').textContent = `${Math.round((passedCount / count) * 100)}%`;
+
+  if (badge) {
+    badge.textContent = `Média: ${avgTotal.toFixed(1)}/60 (${count} sim.)`;
+    badge.style.color = avgTotal >= 30 ? '#86EFAC' : '#FCA5A5';
+  }
+
+  const chartH = 150, groupW = 44, gap = 16;
+  const totalW = Math.max(300, count * (groupW + gap) + 40);
+  const cutoffY = chartH - (30 / 60 * 110) - 20;
+
+  let barsSvg = '';
+  list.forEach((item, i) => {
+    const x = 25 + i * (groupW + gap);
+    const hQ1 = (item.q1 / 60) * 110;
+    const hQ2 = (item.q2 / 60) * 110;
+    const hPT = (item.pt / 60) * 110;
+    const hTotal = (item.total / 60) * 110;
+    const yTotal = chartH - hTotal - 20;
+
+    barsSvg += `
+      <rect x="${x}" y="${yTotal}" width="${groupW/3 - 2}" height="${Math.max(2, hQ1)}" rx="2" fill="#EF4444" opacity="0.85"/>
+      <rect x="${x + groupW/3}" y="${yTotal + hQ1}" width="${groupW/3 - 2}" height="${Math.max(2, hQ2)}" rx="2" fill="#3B82F6" opacity="0.85"/>
+      <rect x="${x + (groupW/3)*2}" y="${yTotal + hQ1 + hQ2}" width="${groupW/3 - 2}" height="${Math.max(2, hPT)}" rx="2" fill="#10B981" opacity="0.85"/>
+      <text x="${x + groupW/2}" y="${yTotal - 5}" fill="${item.total >= 30 ? '#86EFAC' : '#FCA5A5'}" font-size="8.5" font-family="'JetBrains Mono',monospace" font-weight="800" text-anchor="middle">${item.total.toFixed(1)}</text>
+      <text x="${x + groupW/2}" y="${chartH - 6}" fill="#71717A" font-size="7.5" text-anchor="middle">#${i+1}</text>
+    `;
+  });
+
+  if (chartBox) {
+    chartBox.innerHTML = `
+      <div style="overflow-x:auto;background:rgba(0,0,0,0.35);border:1px solid var(--border);border-radius:var(--radius-sm);padding:6px">
+        <svg width="${totalW}" height="${chartH}">
+          <line x1="15" y1="${cutoffY}" x2="${totalW - 10}" y2="${cutoffY}" stroke="#EF4444" stroke-dasharray="3 3"/>
+          <text x="20" y="${cutoffY - 4}" fill="#EF4444" font-size="7.5" font-family="'JetBrains Mono',monospace" font-weight="700">CORTE 30 PTS</text>
+          ${barsSvg}
+        </svg>
+      </div>
+    `;
+  }
+
+  if (historyBox) {
+    historyBox.innerHTML = list.slice().reverse().map(l => `
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.04)">
+        <div>
+          <div style="font-size:0.76rem;font-weight:700">${escapeHtml(l.theme)}</div>
+          <div style="font-size:0.65rem;color:var(--text-muted)">
+            ${l.date} • <span style="color:#EF4444">Q1: ${l.q1.toFixed(1)}</span> | <span style="color:#3B82F6">Q2: ${l.q2.toFixed(1)}</span> | <span style="color:#10B981">Peça: ${l.pt.toFixed(1)}</span>
+          </div>
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:0.84rem;font-weight:800;color:${l.total >= 30 ? '#86EFAC' : '#FCA5A5'}">
+          ${l.total.toFixed(2)} pts
+        </div>
+      </div>
+    `).join('');
+  }
+}
+
+function renderMissions() {
+  const container = document.getElementById('missions-list');
+  if (!container) return;
+  container.innerHTML = MISSIONS.map(m => {
+    const c = state.missionsCount[m.id] || 0;
+    return `
+      <div class="card glass" onclick="claimMission('${m.id}')" style="margin-bottom:0;cursor:pointer">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <span style="font-size:0.76rem;font-weight:700">${m.name}</span>
+          <span style="font-family:'JetBrains Mono',monospace;font-size:0.72rem;color:var(--gold)">+${m.points}</span>
+        </div>
+        <div style="font-size:0.64rem;color:var(--emerald);margin-top:2px">Cumprida: ${c}x</div>
+      </div>
+    `;
+  }).join('');
+  updatePointsBar();
+}
+
+function claimMission(id) {
+  state.missionsCount[id] = (state.missionsCount[id] || 0) + 1;
+  saveData();
+  renderMissions();
+}
+
+function updatePointsBar() {
+  let pts = 0;
+  MISSIONS.forEach(m => { pts += (state.missionsCount[m.id] || 0) * m.points; });
+  document.getElementById('points-counter').textContent = pts;
+  const bar = document.getElementById('points-progress-bar');
+  if (bar) bar.style.width = Math.min(100, (pts / 20000) * 100) + '%';
+}
+
+function exportDataBackup() {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `destinacao_final_backup_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+}
+
+function importDataBackup(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      state = { ...state, ...JSON.parse(e.target.result) };
+      saveData();
+      location.reload();
+    } catch(err) { alert('Erro no backup.'); }
+  };
+  reader.readAsText(file);
+}
+
+function switchNav(tabId) {
+  document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-' + tabId)?.classList.add('active');
+
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  const map = { plan: 0, mission: 1, content: 2, stats: 3, guide: 4 };
+  document.querySelectorAll('.nav-item')[map[tabId] || 0]?.classList.add('active');
+
+  if (tabId === 'stats') renderStats();
+}
+
+function openModal(id) { document.getElementById(id)?.classList.add('open'); }
+function closeModal(id) { document.getElementById(id)?.classList.remove('open'); }
+function escapeHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function escapeQuotes(s) { return String(s||'').replace(/'/g, '\\\''); }
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}
+  </script>
+</body>
+</html>
